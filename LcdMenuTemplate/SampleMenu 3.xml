@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<RootMenu xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Config IdPrefix="mnuCmd" VarPrefix="sampleMenu" UseNumbering="false" IncludeNumberHierarchy="false"
+          MaxNameLen="15" MenuBackFirstItem="false" BackText="Back" ExitText="Exit" AvrProgMem="true"/>
+  <MenuItems>
+    <Item Id="Timer1Root" Name="Timer1 Profile">
+      <MenuItems>
+        <Item Id="T1Hours" Name="Timer1 set hrs"/>
+        <Item Id="T1Mins" Name="Timer1 set mins"/>
+        <Item Id="T1Secs" Name="Timer1 set secs"/>
+      </MenuItems>
+    </Item>
+    <Item Id="Timer2Root" Name="Timer2 Profile">
+      <MenuItems>
+        <Item Id="T2Hours" Name="Timer2 set hrs"/>
+        <Item Id="T2Mins" Name="Timer2 set mins"/>
+        <Item Id="T2Secs" Name="Timer2 set secs"/>
+      </MenuItems>
+    </Item>
+    <Item Id="Timer3Root" Name="Timer3 Profile">
+      <MenuItems>
+        <Item Id="T3Hours" Name="Timer3 set hrs"/>
+        <Item Id="T3Mins" Name="Timer3 set mins"/>
+        <Item Id="T3Secs" Name="Timer3 set secs"/>
+      </MenuItems>
+    </Item>
+    <Item Id="AlarmDuration" Name="Alarm Duration"/>
+    <Item Id="ButtonBeep" Name="Button Beep"/>
+    <Item Id="ResetToDefaults" Name="Reset"/>
+  </MenuItems>
+</RootMenu>

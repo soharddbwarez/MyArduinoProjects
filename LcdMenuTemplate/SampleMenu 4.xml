@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<RootMenu xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Config IdPrefix="mnuCmd" VarPrefix="sampleMenu" UseNumbering="true" IncludeNumberHierarchy="false"
+          MaxNameLen="15" MenuBackFirstItem="false" BackText="Back" ExitText="Exit" AvrProgMem="true"/>
+  <MenuItems>
+    <Item Id="TopItem1" Name="Top item 1"/>
+    <Item Id="TopItem2" Name="Top item 2">
+      <MenuItems>
+        <Item Id="SubItem1" Name="Sub item 1">
+          <MenuItems>
+            <Item Id="SubItemA" Name="Sub item A"/>
+            <Item Id="SubItemB" Name="Sub item B"/>
+            <Item Id="SubItemC" Name="Sub item C"/>
+          </MenuItems>
+        </Item>
+      </MenuItems>
+    </Item>
+    <Item Id="ResetToDefaults" Name="Reset"/>
+  </MenuItems>
+</RootMenu>

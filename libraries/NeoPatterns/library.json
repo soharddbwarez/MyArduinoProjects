@@ -1,0 +1,25 @@
+{
+  "name": "NeoPatterns",
+  "keywords": "NeoPixel, adafruit",
+  "description": "Patterns for NeoPixel strips and matrixes including the patterns of the NeoPattern example by Adafruit.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArminJo/NeoPatterns"
+  },
+  "version": "3.1.1",
+  "exclude": "pictures",
+  "authors": {
+    "name": "Armin Joachimsmeyer",
+    "email": "armin.arduino@gmail.com",
+    "maintainer": true
+  },
+  "license": "GPL-3.0-or-later",
+  "frameworks": "arduino",
+  "platforms": [
+    "atmelavr",
+    "atmelmegaavr",
+    "espressif8266",
+    "espressif32",
+    "ststm32"
+  ]
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<RootMenu xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Config IdPrefix="mnuCmd" VarPrefix="sampleMenu" UseNumbering="true" IncludeNumberHierarchy="true"
+          MaxNameLen="15" MenuBackFirstItem="false" BackText="Back" ExitText="Exit" AvrProgMem="true" />
+  <MenuItems>
+    <Item Id="LcdLightTimeout" Name="LCD light"/>
+    <Item Id="SensorRoot" Name="Sensor">
+      <MenuItems>
+        <Item Id="AudioRoot" Name="Audio">
+          <MenuItems>
+            <Item Id="AudioSelect" Name="Selected"/>
+            <Item Id="AudioThreshold" Name="Threshold"/>
+            <Item Id="AudioDelay" Name="Delay"/>
+          </MenuItems>
+        </Item>
+        <Item Id="DigitalRoot" Name="Digital">
+          <MenuItems>
+            <Item Id="DigitalSelect" Name="Selected"/>
+            <Item Id="DigitalDelay" Name="Delay"/>
+          </MenuItems>
+        </Item>
+        <Item Id="AccelGyroRoot" Name="Accel/Gyro">
+          <MenuItems>
+            <Item Id="AccelGyroSelect" Name="Selected"/>
+            <Item Id="AccelGyroThreshold" Name="Threshold"/>
+            <Item Id="AccelGyroDelay" Name="Delay"/>
+          </MenuItems>
+        </Item>
+      </MenuItems>
+    </Item>
+    <Item Id="CameraRoot" Name="Camera">
+      <MenuItems>
+        <Item Id="ActivationDelay" Name="Delay" />
+        <Item Id="ShutterRoot" Name="Shutter">
+          <MenuItems>
+            <Item Id="ShutterTime" Name="Open time"/>
+            <Item Id="ShutterSustain" Name="Sustain" />
+          </MenuItems>
+        </Item>
+      </MenuItems>
+    </Item>
+    <Item Id="ResetToDefaults" Name="Reset"/>
+  </MenuItems>
+</RootMenu>

@@ -1,0 +1,117 @@
+/*
+ * SnowFlakes.cpp
+ *
+ *  First shows fixed snowflake pattern on a 8x8 Matrix and then creates random patterns.
+ *  Inspired by https://learn.adafruit.com/neopixel-matrix-snowflake-sweater
+ *
+ *  You need to install "Adafruit NeoPixel" library under "Tools -> Manage Libraries..." or "Ctrl+Shift+I" -> use "neoPixel" as filter string
+ *
+ *  Copyright (C) 2019-2022  Armin Joachimsmeyer
+ *  armin.joachimsmeyer@gmail.com
+ *
+ *  This file is part of NeoPatterns https://github.com/ArminJo/NeoPatterns.
+ *
+ *  NeoPatterns is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/gpl.html>.
+ *
+ */
+
+#include <Arduino.h>
+
+//#define TRACE
+
+#define DO_NOT_SUPPORT_RGBW // saves up to 428 bytes additional program memory for the AllPatternsOnMultiDevices() example.
+//#define DO_NOT_SUPPORT_BRIGHTNESS // saves up to 428 bytes additional program memory for the AllPatternsOnMultiDevices() example.
+//#define DO_NOT_SUPPORT_NO_ZERO_BRIGHTNESS // If activated, disables writing of zero only if brightness or color is zero. Saves up to 144 bytes ...
+
+#include <MatrixNeoPatterns.hpp>
+
+#define PIN_NEOPIXEL_MATRIX      8
+#define MATRIX_NUMBER_OF_COLUMNS 8
+#define MATRIX_NUMBER_OF_ROWS    8
+/*
+ * Specify your matrix geometry as 4th parameter.
+ * ....BOTTOM ....RIGHT specify the position of the zeroth pixel.
+ * See MatrixNeoPatterns.h for further explanation.
+ */
+MatrixNeoPatterns NeoPixelMatrix = MatrixNeoPatterns(MATRIX_NUMBER_OF_COLUMNS, MATRIX_NUMBER_OF_ROWS, PIN_NEOPIXEL_MATRIX,
+NEO_MATRIX_BOTTOM | NEO_MATRIX_RIGHT | NEO_MATRIX_ROWS | NEO_MATRIX_PROGRESSIVE, NEO_GRB + NEO_KHZ800, NULL);
+
+uint8_t *sPixelBuffer;
+
+#define TEST_DELAY_MILLIS 2000
+
+void setup() {
+    pinMode(LED_BUILTIN, OUTPUT);
+
+    Serial.begin(115200);
+#if defined(__AVR_ATmega32U4__) || defined(SERIAL_PORT_USBVIRTUAL) || defined(SERIAL_USB) /*stm32duino*/|| defined(USBCON) /*STM32_stm32*/|| defined(SERIALUSB_PID) || defined(ARDUINO_attiny3217)
+    delay(4000); // To be able to connect Serial monitor after reset or power up and before first print out. Do not wait for an attached Serial Monitor!
+#endif
+    // Just to know which program is running on my Arduino
+    Serial.println(F("START " __FILE__ " from " __DATE__ "\r\nUsing library version " VERSION_NEOPATTERNS));
+    NeoPixelMatrix.printConnectionInfo(&Serial);
+
+//    bar24.begin();
+    // This initializes the NeoPixel library and checks if enough memory was available
+    if (!NeoPixelMatrix.begin(&Serial)) {
+        // Blink forever
+        while (true) {
+            digitalWrite(LED_BUILTIN, HIGH);
+            delay(500);
+            digitalWrite(LED_BUILTIN, LOW);
+            delay(500);
+        }
+    }
+
+    /*
+     * Fixed pattern.
+     * The numbers behind the pattern are related to the pattern number in:
+     * https://learn.adafruit.com/neopixel-matrix-snowflake-sweater/code
+     */
+    Serial.println(F("Displaying 9 fixed patterns"));
+    NeoPixelMatrix.drawQuarterPatternOdd(0xDA68, COLOR32_WHITE_HALF, COLOR32_BLACK); // Adafruit pattern 5
+    delay(TEST_DELAY_MILLIS);
+    NeoPixelMatrix.drawQuarterPatternOdd(0x7AC8, COLOR32_WHITE_HALF, COLOR32_BLACK); // 6
+    delay(TEST_DELAY_MILLIS);
+    NeoPixelMatrix.drawQuarterPatternOdd(0x6DA4, COLOR32_WHITE_HALF, COLOR32_BLACK); // 9
+    delay(TEST_DELAY_MILLIS);
+    NeoPixelMatrix.drawQuarterPatternOdd(0x8641, COLOR32_WHITE_HALF, COLOR32_BLACK); // 3
+    delay(TEST_DELAY_MILLIS);
+
+    NeoPixelMatrix.drawQuarterPatternOdd(~0x7AC8, COLOR32_WHITE_HALF, COLOR32_BLACK); // 11
+    delay(TEST_DELAY_MILLIS);
+    NeoPixelMatrix.drawQuarterPatternOdd(~0xDA68, COLOR32_WHITE_HALF, COLOR32_BLACK); // own pattern
+    delay(TEST_DELAY_MILLIS);
+
+    NeoPixelMatrix.drawQuarterPatternOdd(0x936D, COLOR32_WHITE_HALF, COLOR32_BLACK); // 8
+    delay(TEST_DELAY_MILLIS);
+    NeoPixelMatrix.drawQuarterPatternOdd(0x79AC, COLOR32_WHITE_HALF, COLOR32_BLACK); // 1
+    delay(TEST_DELAY_MILLIS);
+    NeoPixelMatrix.drawQuarterPatternOdd(0x79AD, COLOR32_WHITE_HALF, COLOR32_BLACK); // 1
+    delay(TEST_DELAY_MILLIS);
+    delay(4000);
+    Serial.println(F("Now creating random patterns"));
+}
+
+void loop() {
+    // show random pattern in random color
+    uint16_t tPatternValue = random(250, 64000);
+    uint8_t tColorValue = random(255);
+    NeoPixelMatrix.drawQuarterPatternOdd(tPatternValue, NeoPixelMatrix.Wheel(tColorValue), COLOR32_BLACK); // 1
+    Serial.print(F("Pattern value=0x"));
+    Serial.print(tPatternValue, HEX);
+    Serial.print(F(" color="));
+    Serial.println(tColorValue);
+    delay(TEST_DELAY_MILLIS);
+}

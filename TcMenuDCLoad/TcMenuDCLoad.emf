@@ -1,0 +1,188 @@
+{
+  "version": "1.00",
+  "projectName": "F:\\Documents\\Arduino\\TcMenuDCLoad\\TcMenuDCLoad.emf",
+  "author": "ricar",
+  "items": [
+    {
+      "parentId": 0,
+      "type": "textItem",
+      "item": {
+        "textLength": 5,
+        "itemType": "PLAIN_TEXT",
+        "name": "Volt",
+        "variableName": "Volt",
+        "id": 1,
+        "eepromAddress": -1,
+        "functionName": "GetVoltage",
+        "readOnly": true,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 0,
+      "type": "textItem",
+      "item": {
+        "textLength": 5,
+        "itemType": "PLAIN_TEXT",
+        "name": "Amps",
+        "variableName": "Amps",
+        "id": 2,
+        "eepromAddress": -1,
+        "functionName": "GetAmps",
+        "readOnly": true,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 0,
+      "type": "boolItem",
+      "item": {
+        "naming": "ON_OFF",
+        "name": "DC Load",
+        "variableName": "DCLoad",
+        "id": 3,
+        "eepromAddress": -1,
+        "functionName": "TogglePin13",
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 0,
+      "type": "subMenu",
+      "item": {
+        "secured": false,
+        "name": "Settings",
+        "variableName": "Settings",
+        "id": 4,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 4,
+      "type": "enumItem",
+      "item": {
+        "enumEntries": [
+          "Analog",
+          "Digital"
+        ],
+        "name": "SelectControl",
+        "variableName": "SettingsSelectControl",
+        "id": 5,
+        "eepromAddress": 2,
+        "functionName": "SelectControl",
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true
+      }
+    }
+  ],
+  "codeOptions": {
+    "embeddedPlatform": "ARDUINO",
+    "lastDisplayUuid": "d4c84106-fa87-4024-b91e-053e17a52b8f",
+    "lastInputUuid": "6dd87e7d-e751-4912-a70d-91793b1d3d87",
+    "lastRemoteUuid": "2c101fec-1f7d-4ff3-8d2b-992ad41e7fcb",
+    "lastRemoteUuids": [
+      "2c101fec-1f7d-4ff3-8d2b-992ad41e7fcb"
+    ],
+    "lastThemeUuid": "b186c809-d9ef-4ca8-9d4b-e4780a041ccc",
+    "applicationUUID": "c1e57f0f-7446-4948-9970-833b4018e35b",
+    "applicationName": "TcMenuDCLoad",
+    "lastProperties": [
+      {
+        "name": "LCD_WIDTH",
+        "latestValue": "20",
+        "subsystem": "DISPLAY"
+      },
+      {
+        "name": "LCD_HEIGHT",
+        "latestValue": "4",
+        "subsystem": "DISPLAY"
+      },
+      {
+        "name": "I2C_ADDRESS",
+        "latestValue": "0x20",
+        "subsystem": "DISPLAY"
+      },
+      {
+        "name": "PIN_LAYOUT",
+        "latestValue": "EN_RW_RS",
+        "subsystem": "DISPLAY"
+      },
+      {
+        "name": "WIRE_VARIABLE",
+        "latestValue": "Wire",
+        "subsystem": "DISPLAY"
+      },
+      {
+        "name": "UNO_OR_FULL",
+        "latestValue": "unoLcd",
+        "subsystem": "DISPLAY"
+      },
+      {
+        "name": "UPDATES_PER_SEC",
+        "latestValue": "2",
+        "subsystem": "DISPLAY"
+      },
+      {
+        "name": "PULLUP_LOGIC",
+        "latestValue": "true",
+        "subsystem": "INPUT"
+      },
+      {
+        "name": "INTERRUPT_SWITCHES",
+        "latestValue": "true",
+        "subsystem": "INPUT"
+      },
+      {
+        "name": "SWITCH_IODEVICE",
+        "latestValue": "devicePins",
+        "subsystem": "INPUT"
+      },
+      {
+        "name": "ENCODER_PIN_A",
+        "latestValue": "2",
+        "subsystem": "INPUT"
+      },
+      {
+        "name": "ENCODER_PIN_B",
+        "latestValue": "3",
+        "subsystem": "INPUT"
+      },
+      {
+        "name": "ENCODER_PIN_OK",
+        "latestValue": "8",
+        "subsystem": "INPUT"
+      },
+      {
+        "name": "ENCODER_BACK_PIN",
+        "latestValue": "-1",
+        "subsystem": "INPUT"
+      },
+      {
+        "name": "ENCODER_NEXT_PIN",
+        "latestValue": "-1",
+        "subsystem": "INPUT"
+      },
+      {
+        "name": "ENCODER_IS_QUARTER_CYCLE",
+        "latestValue": "false",
+        "subsystem": "INPUT"
+      }
+    ],
+    "namingRecursive": true,
+    "saveToSrc": false,
+    "useCppMain": false,
+    "eepromDefinition": "",
+    "authenticatorDefinition": "",
+    "projectIoExpanders": [
+      "deviceIO:"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+install latest Python from https://www.python.org/downloads/
+choose "add Python to PATH variable" or similar.
+choose "extend PATH length limit" or similar.
+
+run "pip install pygame"
+run "pip install pyserial"
+run "pip install pynput"
+
+edit baudrate and port at line 15ff. of the Keyboard2Serial.py and Joystick2Serial.py code
+
+run  "RunPythonKeybordForInput.cmd" or "RunPythonJoystickForInput.cmd"

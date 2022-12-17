@@ -1,0 +1,13 @@
+{
+  "name": "XPT2046_Calibrated",
+  "keywords": "display, tft, lcd, graphics, spi, touchscreen",
+  "description": "Based on Paul Stoffregen's XPT2046_Touchscreen library. Adds 3-point calibration support based on a paper by Fang & Chang (Texas Instruments): http://www.ti.com/lit/an/slyt277/slyt277.pdf. See examples for usage.",
+  "exclude": "doc",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/ardnew/XPT2046_Calibrated"
+  },
+  "frameworks": "arduino",
+  "platforms": "*"
+}

@@ -88,6 +88,18 @@
   #define BUTTON_B 0     // D3
 
 // https://github.com/SpacehuhnTech/esp8266_deauther/wiki/Setup-Display-&-Buttons#example-setup-with-i2c-oled
+// I changed this part of the code that supports specifically my Arduino Board that I'm using which is a Chinese clone
+// that I got from BangGood, sadly it's not available anymore. The best thing you can do at this point is getting the
+// D1 Mini clone board that I also have an can confirm it works, you can get it here: 
+// https://www.banggood.com/custlink/vvDJ43pViG
+// You'll have to figure out if the same pins still work with the D1 Mini, also the D1 Mini has many more GPIO pins 
+// available so you might want to consider changing this part of the code below and add back the RGB LED functionality
+// that I removed from the code because I have just enough GPIO pins to control the display with the 3 buttons
+// at most which is why I decided to remove that part of the code completely.
+// Changed by Ricardo Penders (soharddbwarez), you can find me on GitHub at https://github.com/soharddbwarez
+// and the link to this repository specifically is here:
+// https://github.com/soharddbwarez/MyArduinoProjects/tree/master/esp8266_deauther-2.6.1
+
 #elif defined(DISPLAY_EXAMPLE_I2C)
 
 // ===== DISPLAY ===== //

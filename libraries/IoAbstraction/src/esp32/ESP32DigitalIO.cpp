@@ -9,12 +9,11 @@
 
 #if defined(IOA_USE_ARDUINO) && defined(ESP32) && defined(IOA_USE_ESP32_EXTRAS)
 
-IoAbstractionRef arduinoAbstraction = nullptr;
+
+BasicIoAbstraction internalIoAbstraction;
+
 IoAbstractionRef ioUsingArduino() {
-    if (arduinoAbstraction == nullptr) {
-        arduinoAbstraction = new BasicIoAbstraction();
-    }
-    return arduinoAbstraction;
+    return &internalIoAbstraction;
 }
 
 volatile bool esp32InterruptDriverLoaded = false;

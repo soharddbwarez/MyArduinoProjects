@@ -64,7 +64,7 @@ class MBedLogger : public Print {
 private:
     FileHandle& serial;
 public:
-    MBedLogger(FileHandle& serialName) : serial(serialName) {}
+    explicit MBedLogger(FileHandle& serialName) : serial(serialName) {}
 
     size_t write(uint8_t ch) override {
         serial.write(&ch, 1);
@@ -81,14 +81,18 @@ extern MBedLogger LoggingPort;
 // a couple of definitions here to avoid including headers, F() macro not needed on mbed
 unsigned long millis();
 #define F(x) x
+#define IOLOG_MBED_PORT_IF_NEEDED(tx, rx) BufferedSerial serPort(tx, rx);MBedLogger LoggingPort(serPort);
+#define IOLOG_START_SERIAL serPort.set_baud(115200);
 #else
-
 // Arduino:
 // You can change the logging serial port by defining LoggingPort to your chosen serial port.
 #ifndef LoggingPort
 #define LoggingPort Serial
 #endif
+#define IOLOG_START_SERIAL LoggingPort.begin(115200);
+#define IOLOG_MBED_PORT_IF_NEEDED(tx, rx)
 #endif
+
 
 const char* prettyLevel(SerLoggingLevel level);
 #define logTimeAndLevel(title, lvl) LoggingPort.print(millis());LoggingPort.print('-');LoggingPort.print(prettyLevel(lvl));LoggingPort.print(':');LoggingPort.print(title)
@@ -138,6 +142,8 @@ inline void serdebugHexDump(const char *title, const void* data, size_t len) { s
 #define serdebug3(x1, x2, x3) serlog3(SER_DEBUG, x1, x2, x3)
 #define serdebugHex(x1, x2) serlogHex(SER_DEBUG, x1, x2)
 
+void startTaskManagerLogDelegate();
+
 #else
 // all loging to no operations (commenting out the above define of IO_LOGGING_DEBUG to remove in production builds).
 #define serdebugF(x) 
@@ -163,6 +169,13 @@ inline void serdebugHexDump(const char *title, const void* data, size_t len) { s
 #define serlog3(lvl, x1, x2, x3)
 #define serlogHex(lvl, x1, x2)
 
+#define startTaskManagerLogDelegate()
+
+#define IOLOG_START_SERIAL
+#define IOLOG_MBED_PORT_IF_NEEDED(tx, rx)
+
+#define serEnableLevel(l, a)
+#define serLevelEnabled(l) false
 #endif // IO_LOGGING_DEBUG
 
 #endif // _IO_LOGGING_H_

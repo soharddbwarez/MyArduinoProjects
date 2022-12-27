@@ -10,11 +10,15 @@
 
 #include "ArduinoAnalogDevice.h"
 
-ArduinoAnalogDevice* ArduinoAnalogDevice::theInstance = nullptr;
+ArduinoAnalogDevice analogDeviceInstance;
 AnalogDevice* internalAnalogIo() {
-    if(ArduinoAnalogDevice::theInstance == nullptr) ArduinoAnalogDevice::theInstance = new ArduinoAnalogDevice();
-    return ArduinoAnalogDevice::theInstance;
+    return &analogDeviceInstance;
 }
+
+ArduinoAnalogDevice& internalAnalogDevice() {
+    return analogDeviceInstance;
+}
+
 
 ArduinoAnalogDevice::ArduinoAnalogDevice(uint8_t readBitResolution, uint8_t writeBitResolution) {
 #if IOA_ANALOGIN_RES > 10
@@ -30,7 +34,6 @@ ArduinoAnalogDevice::ArduinoAnalogDevice(uint8_t readBitResolution, uint8_t writ
     this->writeBitResolution = writeBitResolution;
     this->readResolution = (1 << readBitResolution) - 1;
     this->writeResolution = (1 << writeBitResolution) - 1;
-    theInstance = this;
 }
 
 void ArduinoAnalogDevice::setCurrentFloat(pinid_t pin, float value) {

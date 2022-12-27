@@ -16,7 +16,8 @@
 #include <TaskManagerIO.h>
 
 // As per the above wiki this uses the default settings for analog ranges.
-IoAbstractionRef dfRobotKeys = inputFromDfRobotShield();
+DfRobotInputAbstraction dfRobotKeys(dfRobotAvrRanges);
+//DfRobotInputAbstraction dfRobotKeys(dfRobotV1AvrRanges, );
 
 // for V1.0 of the shield uncomment the below definition and comment out the above defintion
 // this has the other settings for analog ranges.
@@ -63,7 +64,7 @@ void setup() {
     Serial.begin(115200);
 
     // initialise the switches component with the DfRobot shield as the input method.
-    switches.initialise(dfRobotKeys, false); // df robot is always false for 2nd parameter.
+    switches.initialise(asIoRef(dfRobotKeys), false); // df robot is always false for 2nd parameter.
 
     // now we add the switches, each one just logs the key press, the last parameter to addSwitch
     // is the repeat frequency is optional, when not set it implies not repeating.

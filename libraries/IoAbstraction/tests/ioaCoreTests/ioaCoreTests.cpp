@@ -1,9 +1,11 @@
-#include <AUnit.h>
-#include <Arduino.h>
+
+#include <testing/SimpleTest.h>
+#include <IoAbstraction.h>
+#include <PlatformDeterminationWire.h>
 #include <MockEepromAbstraction.h>
 #include <EepromAbstractionWire.h>
-#include "IoAbstraction.h"
-#include <Wire.h>
+
+using namespace SimpleTest;
 
 char memToWrite[110] = { };
 char readBuffer[110] = { };
@@ -31,7 +33,7 @@ test(testI2cArrayWrites) {
     serdebug("I2C eeprom array written.");
 
     eeprom.readIntoMemArray((uint8_t*)readBuffer, 710, sizeof(memToWrite));
-    assertStringCaseEqual(memToWrite, readBuffer);
+    assertStringEquals(memToWrite, readBuffer);
     serdebug("Read into mem done");
 }
 
@@ -41,9 +43,9 @@ test(testI2cSingleWrites) {
     assertTrue(romClear(eeprom, 700));
 
     eeprom.write8(700, 0xFF);
-    assertEqual(0xFF, eeprom.read8(700));
+    assertEquals(0xFF, eeprom.read8(700));
     eeprom.write8(700, 0xDD);
-    assertEqual(0xDD, eeprom.read8(700));
+    assertEquals(0xDD, eeprom.read8(700));
 
     eeprom.write16(701, 0xf00d);
     eeprom.write32(703, 0xbeeff00d);
@@ -51,8 +53,8 @@ test(testI2cSingleWrites) {
     yield();
     serdebug("I2C reads...");
 
-    assertEqual((uint16_t)0xf00d, eeprom.read16(701));
-    assertEqual((uint32_t)0xbeeff00d, eeprom.read32(703));
+    assertEquals((uint16_t)0xf00d, eeprom.read16(701));
+    assertEquals((uint32_t)0xbeeff00d, eeprom.read32(703));
 
     assertFalse(eeprom.hasErrorOccurred());
 }
@@ -76,15 +78,15 @@ test(testMockEeprom) {
     eeprom.write32(3, 0xbeeff00d);
     eeprom.writeArrayToRom(10, (const uint8_t*)memToWrite, sizeof(memToWrite));
 
-    assertEqual((uint8_t)0xfe, eeprom.read8(0));
-    assertEqual((uint16_t)0xf00d, eeprom.read16(1));
-    assertEqual((uint32_t)0xbeeff00d, eeprom.read32(3));
+    assertEquals((uint8_t)0xfe, eeprom.read8(0));
+    assertEquals((uint16_t)0xf00d, eeprom.read16(1));
+    assertEquals((uint32_t)0xbeeff00d, eeprom.read32(3));
     eeprom.readIntoMemArray((uint8_t*)readBuffer, 10, sizeof(memToWrite));
-    assertStringCaseEqual(memToWrite, readBuffer);
+    assertStringEquals(memToWrite, readBuffer);
 
     // now try other values to ensure the prior test worked
     eeprom.write8(0, 0xaa);
-    assertEqual((uint8_t)0xaa, eeprom.read8(0));
+    assertEquals((uint8_t)0xaa, eeprom.read8(0));
     assertFalse(eeprom.hasErrorOccurred());
 
     // write beyond boundary
@@ -92,13 +94,21 @@ test(testMockEeprom) {
     assertTrue(eeprom.hasErrorOccurred());
 }
 
+IOLOG_MBED_PORT_IF_NEEDED(USBTX, USBRX)
+
+#ifdef IOA_USE_MBED
+I2C Wire(PF_0, PF_1);
+#endif
+
 void setup() {
+    IOLOG_START_SERIAL
+
+#ifdef IOA_USE_MBED
+    ioaWireBegin(&Wire);
+#else
     Wire.begin();
-    Serial.begin(115200);
-    while (!Serial);
+#endif
+    startTesting();
 }
 
-void loop() {
-    aunit::TestRunner::setTimeout(60);
-    aunit::TestRunner::run();
-}
+DEFAULT_TEST_RUNLOOP

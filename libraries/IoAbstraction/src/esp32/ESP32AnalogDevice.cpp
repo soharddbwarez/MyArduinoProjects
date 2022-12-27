@@ -3,6 +3,8 @@
  * This product is licensed under an Apache license, see the LICENSE file in the top-level directory.
  */
 
+#include "AnalogDeviceAbstraction.h"
+
 #ifdef ESP32
 
 #include "ESP32AnalogDevice.h"
@@ -114,8 +116,6 @@ void EspAnalogOutputMode::write(unsigned int newVal) const {
     ledcWrite(pwmChannel, newVal);
 }
 
-ESP32AnalogDevice* ESP32AnalogDevice::theInstance = nullptr;
-
 ESP32AnalogDevice::ESP32AnalogDevice() {
     adc1_config_width(IOA_ESP_BIT_SELECTION);
 }
@@ -150,9 +150,13 @@ void ESP32AnalogDevice::setCurrentFloat(pinid_t pin, float value) {
     serlogF3(SER_IOA_DEBUG, "Flt set ", value, compVal);
 }
 
+ESP32AnalogDevice esp32AnalogDevice;
 AnalogDevice* internalAnalogIo() {
-    if(ESP32AnalogDevice::theInstance == nullptr) ESP32AnalogDevice::theInstance = new ESP32AnalogDevice();
-    return ESP32AnalogDevice::theInstance;
+    return &esp32AnalogDevice;
+}
+
+ESP32AnalogDevice& internalAnalogDevice() {
+    return esp32AnalogDevice;
 }
 
 #endif

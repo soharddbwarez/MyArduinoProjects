@@ -72,12 +72,11 @@ GpioWrapper *BasicIoAbstraction::allocatePinIfNeedBe(uint8_t pinToAlloc) {
     return gpioWrapper;
 }
 
-IoAbstractionRef mbedAbstraction = NULL;
+BasicIoAbstraction internalIoAbstraction;
+
 IoAbstractionRef internalDigitalIo() {
-    if (mbedAbstraction == NULL) {
-        mbedAbstraction = new BasicIoAbstraction();
-    }
-    return mbedAbstraction;
+    return &internalIoAbstraction;
 }
+
 
 #endif // IOA_USE_MBED

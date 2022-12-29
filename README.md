@@ -23,7 +23,11 @@ I'm new to using GitHub and Git which I started using very recently so keep that
 2. Figuring out how to use Git and GitHub correctly (I started working with Git recently)
 3. I also need to learn all the nuances of the Arduino IDE 2.0
 4. One of those nuances is the Autoformatting feature (.clang-format file at the root of a sketch) 
-   that I may want to use in the future
+   that I may want to use in the future.
+   Important links for detailed info about the clang-format:
+   i.   Clang-Format Style Options - Clang 16.0.0git documentation https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+   ii.  Example file of .clang-format https://raw.githubusercontent.com/arduino/tooling-project-assets/main/other/clang-format-configuration/.clang-format
+   iii. ClangFormat configuration file for official Arduino code style https://github.com/arduino/tooling-project-assets/tree/main/other/clang-format-configuration
 5. Collaborate with other developers
 6. Keep opimizing and updating my code projects
 ```

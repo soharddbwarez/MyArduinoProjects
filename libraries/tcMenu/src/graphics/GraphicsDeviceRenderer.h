@@ -4,7 +4,8 @@
  */
 
 /**
- * @file GraphicsDeviceRenderer.h the interface that all graphics devices should implement to do the actual graphics rendering.
+ * @file GraphicsDeviceRenderer.h
+ * @brief the interface that all graphics devices should implement to do the actual graphics rendering.
  */
 
 #ifndef TCLIBRARYDEV_GRAPHICSDEVICERENDERER_H
@@ -15,10 +16,13 @@
 #include "BaseGraphicalRenderer.h"
 #include "GfxMenuConfig.h"
 
+#ifndef MINIMUM_CURSOR_SIZE
 #define MINIMUM_CURSOR_SIZE 6
+#endif
+
+class UnicodeFontHandler;
 
 namespace tcgfx {
-
     /**
      * This is the interface that all graphical rendering devices extend from when using GraphicsDeviceRenderer. Instances
      * of this map all the graphics primitives for each display type. You can use it yourself in code to present moderately
@@ -42,8 +46,12 @@ namespace tcgfx {
      * supporting new graphical displays will be far easier, and less maintenance going forwards.
      */
     class DeviceDrawable {
+    public:
+        enum SubDeviceType { NO_SUB_DEVICE, SUB_DEVICE_4BPP, SUB_DEVICE_2BPP };
     protected:
+        UnicodeFontHandler* fontHandler = nullptr;
         color_t backgroundColor = 0, drawColor = 0;
+        SubDeviceType subDeviceType = NO_SUB_DEVICE;
     public:
         virtual ~DeviceDrawable() = default;
         /**
@@ -64,13 +72,17 @@ namespace tcgfx {
         virtual DeviceDrawable* getSubDeviceFor(const Coord& where, const Coord& size, const color_t *palette, int paletteSize)=0;
 
         /**
-         * Draw text at the location requested using the font and color information provided.
+         * Draw text at the location requested using the font and color information provided. If the TcUnicode flag is
+         * enabled then all drawing will take place using TcUnicode, otherwise the native font support will be called,
+         * as implemented by `internalDrawText`.
          * @param where the position on the screen
          * @param font the font to use
          * @param mag the magnification of the font - if supported
          * @param text the string to print
          */
-        virtual void drawText(const Coord& where, const void* font, int mag, const char* text)=0;
+        void drawText(const Coord& where, const void* font, int mag, const char* text);
+
+        virtual void internalDrawText(const Coord& where, const void* font, int mag, const char* text)=0;
 
         /**
          * Draw an icon bitmap at the specified location using the provided color, you can choose either the regular or
@@ -137,6 +149,17 @@ namespace tcgfx {
         virtual void transaction(bool isStarting, bool redrawNeeded)=0;
 
         /**
+         * This is the internal implementation of textExtents for when TcUnicode is not in use, always prefer the use
+         * of textExtents unless you actually need to directly access the library functions.
+         * @param font the font to get sizing for
+         * @param mag the magnification of the font if supported
+         * @param text the text to get the size of
+         * @param baseline optionally, the base line will be populated if this is provided.
+         * @return the X and Y dimensions
+         */
+        virtual Coord internalTextExtents(const void* font, int mag, const char* text, int* baseline)=0;
+
+        /**
          * gets the extents of the text, and optionally the baseline for the given font and text. The X axis of the returned
          * Coord is the text width, the Y axis has the height, finally the base line is the descent.
          * @param font the font to get sizing for
@@ -145,7 +168,16 @@ namespace tcgfx {
          * @param baseline optionally, the base line will be populated if this is provided.
          * @return the X and Y dimensions
          */
-        virtual Coord textExtents(const void* font, int mag, const char* text, int* baseline)=0;
+        Coord textExtents(const void* font, int mag, const char* text, int* baseline);
+
+        /**
+         * Draw a pixel in the current draw color at the location provided. This should be implemented in the most
+         * optimal way possible for the platform
+         * @param x the x location
+         * @param y the y location
+         * @param col the color of the pixel
+         */
+        virtual void drawPixel(uint16_t x, uint16_t y)=0;
 
         /**
          * Gets the width and height of the text in the font provided, returned in a Coord.
@@ -190,6 +222,46 @@ namespace tcgfx {
          * @param fg foreground / drawing color.
          */
         void setDrawColor(color_t fg) { drawColor = getUnderlyingColor(fg); }
+
+        /**
+         * Enables the use of tcUnicode characters, and at this point the drawable assumes all fonts are tcUnicode or
+         * Adafruit GFX. This only prevents creation of the handler if called before getting the font handler.
+         * @param enabled true if TcUnicode support is to be enabled, otherwise false.
+         */
+        void enableTcUnicode() { if(fontHandler == nullptr) fontHandler = createFontHandler(); }
+        /**
+         * Check if TcUnicode is enabled. Useful before calling `getFontHandler` to ensure the support is on.
+         * @return true if on, otherwise false
+         */
+        bool isTcUnicodeEnabled() { return fontHandler != nullptr; }
+
+        /**
+         * Gets hold of the TcUnicode font handler that can render text onto the display. It has features similar to
+         * print and Adafruit GFX that make rendering unicode character with UTF-8 easier.
+         * @param enableIfNeeded if true, the TcUnicode enable flag will be enabled if needed.
+         * @return the font handler if unicode is enabled, otherwise nullptr.
+         */
+        UnicodeFontHandler* getUnicodeHandler(bool enableIfNeeded = true);
+
+        /**
+         * @return the type of sub-device that is supported by this display drawable.
+         */
+        SubDeviceType getSubDeviceType() { return subDeviceType; }
+
+    protected:
+        /**
+         * It is best that all device drawables override this with an optimal implementation rather than rely on the
+         * default one which indirects through draw pixel here adding a layer of latency
+         * @return a font handler
+         */
+        virtual UnicodeFontHandler* createFontHandler();
+
+        /**
+         * Normally used internally by extension classes to set the type of subdevice they can support. Defaults to
+         * none.
+         * @param s the type of sub-device supported.
+         */
+        void setSubDeviceType(SubDeviceType s) { subDeviceType = s; }
     };
 
     /**
@@ -262,6 +334,12 @@ namespace tcgfx {
          * @return the underlying device drawable.
          */
         DeviceDrawable* getDeviceDrawable() { return rootDrawable; }
+
+        /**
+         * Enables TcUnicode as the default font processor for all operations, and ensures that the unicode helper can
+         * be accessed too.
+         */
+        void enableTcUnicode() { rootDrawable->enableTcUnicode(); }
     private:
         int calculateSpaceBetween(const void* font, uint8_t mag, const char* buffer, int start, int end);
         void internalDrawText(GridPositionRowCacheEntry* pEntry, const Coord& where, const Coord& size);
@@ -272,6 +350,8 @@ namespace tcgfx {
         void drawIconItem(GridPositionRowCacheEntry *pEntry, Coord& where, Coord& size);
         void drawBorderAndAdjustSize(Coord &where, Coord &size, MenuBorder &border);
     };
+
+    void setTcFontAccordingToMag(UnicodeFontHandler* handler, const void* font, int mag);
 
 } // namespace tcgfx
 

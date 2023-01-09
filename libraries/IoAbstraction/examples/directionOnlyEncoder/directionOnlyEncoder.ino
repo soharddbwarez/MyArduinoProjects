@@ -5,7 +5,13 @@
  Switch input is designed to work with the task manager class which
  makes scheduling tasks trivial.
 
- Circuit / detail: https://www.thecoderscorner.com/products/arduino-downloads/io-abstraction/arduino-switches-handled-as-events/
+ Circuit / detail:
+ https://www.thecoderscorner.com/products/arduino-downloads/io-abstraction/arduino-switches-handled-as-events/
+
+ Documentation and reference:
+
+ https://www.thecoderscorner.com/products/arduino-downloads/io-abstraction/
+ https://www.thecoderscorner.com/ref-docs/ioabstraction/html/index.html
 
 */
 
@@ -13,12 +19,12 @@
 #include <TaskManagerIO.h>
 
 // The pin onto which we connected the rotary encoders switch
-const int spinwheelClickPin = 4;
+const int spinwheelClickPin = 7;
 
 // The two pins where we connected the A and B pins of the encoder. I recomend you dont change these
 // as the pin must support interrupts.
-const int encoderAPin = 5;
-const int encoderBPin = 6;
+const int encoderAPin = 3;
+const int encoderBPin = 4;
 
 //
 // When the spinwheel is clicked, this function will be run as we registered it as a callback
@@ -49,7 +55,7 @@ void setup() {
   // First we set up the switches library, giving it the task manager and tell it to use arduino pins
   // We could also of chosen IO through an i2c device that supports interrupts.
   // If you want to use PULL DOWN instead of PULL UP logic, change the true to false below.
-  switches.initialise(internalDigitalIo(), true);
+  switches.initialise(asIoRef(internalDigitalDevice()), true);
 
   // now we add the switches, we dont want the spinwheel button to repeat, so leave off the last parameter
   // which is the repeat interval (millis / 20 basically) Repeat button does repeat as we can see.
@@ -58,8 +64,9 @@ void setup() {
   // now we set up the rotary encoder, first we give the A pin and the B pin.
   // we only want directional indications so we set the precision to max 0, current 0.
   // when we do this, the callback either gets 0 no change, -1 down or 1 up.
+  // The easiest way to configure direction mode is by setting the user intention as below.
   setupRotaryEncoderWithInterrupt(encoderAPin, encoderBPin, onEncoderChange);
-  switches.changeEncoderPrecision(0, 0);
+  switches.getEncoder()->setUserIntention(DIRECTION_ONLY);
 }
 
 void loop() {

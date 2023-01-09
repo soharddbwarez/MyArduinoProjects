@@ -3,6 +3,11 @@
  * This product is licensed under an Apache license, see the LICENSE file in the top-level directory.
  */
 
+/**
+ * @file BaseRenderers.h
+ * @brief The base definitions and classes shared by all TcMenu renderers.
+ */
+
 #ifndef _BASE_RENDERERS_H_
 #define _BASE_RENDERERS_H_
 
@@ -304,14 +309,7 @@ public:
 	 * re-initialises the reset interval to 30 seconds
 	 * @param updatesSec the number of updates.
 	 */
-	void setUpdatesPerSecond(int updatesSec) {
-        bool needsReschedule = updatesPerSecond == UPDATES_SEC_DISPLAY_OFF;
-	    updatesPerSecond = updatesSec;
-        resetValInTicks = 30 * updatesSec;
-        if(needsReschedule) {
-            taskManager.execute(this);
-        }
-    }
+	void setUpdatesPerSecond(int updatesSec);
 
     /**
      * Turn off the display updates to allow for low power state transition, to re-enable call setUpdatesPerSecond
@@ -327,7 +325,7 @@ public:
      * no present editor.
      * @param resetTime
      */
-    void setResetIntervalTimeSeconds(uint16_t interval) { 
+    void setResetIntervalTimeSeconds(uint16_t interval) {
         resetValInTicks = interval * updatesPerSecond;
     }
 

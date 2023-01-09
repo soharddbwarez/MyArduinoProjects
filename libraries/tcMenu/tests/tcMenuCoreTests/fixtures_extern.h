@@ -43,4 +43,13 @@ extern const char *uuid1;
 extern const char *uuid2;
 extern const char *uuid3;
 
+bool checkEditorHints(int start, int end, CurrentEditorRenderingHints::EditorRenderingType ty);
+
+class TaskManagerResettingTest : public SimpleTest::UnitTestExecutor {
+public:
+    void setup() override {
+        taskManager.reset();
+    }
+};
+
 #endif //TCLIBRARYDEV_FIXTURES_EXTERN_H

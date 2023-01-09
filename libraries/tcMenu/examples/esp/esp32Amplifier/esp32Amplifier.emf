@@ -541,6 +541,11 @@
         "subsystem": "THEME"
       },
       {
+        "name": "USE_TC_UNICODE",
+        "latestValue": "false",
+        "subsystem": "THEME"
+      },
+      {
         "name": "USE_SLIDER_ANALOG",
         "latestValue": "true",
         "subsystem": "THEME"
@@ -553,7 +558,7 @@
     ],
     "namingRecursive": true,
     "saveToSrc": false,
-    "useCppMain": true,
+    "useCppMain": false,
     "eepromDefinition": "eeprom:",
     "authenticatorDefinition": "rom:200:6",
     "projectIoExpanders": [

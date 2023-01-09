@@ -1,0 +1,20 @@
+Sources for both fonts are:
+
+Roboto
+------
+Roboto is using the same license as the library - Apache 2.0 (not repeated here, see top level).
+https://fonts.google.com/specimen/Roboto
+
+Open Sans
+---------
+Open Sans is using OFL, see the file in this directory.
+https://fonts.google.com/specimen/Open+Sans
+
+Please read the full license text (OFL.txt) to understand the permissions,
+restrictions and requirements for usage, redistribution, and modification.
+
+You can use them in your products & projects – print or digital,
+commercial or otherwise.
+
+This isn't legal advice, please consider consulting a lawyer and see the full
+license for all details.

@@ -1,6 +1,6 @@
 # IoAbstraction for Arduino and mbed summary
 
-Dave Cherry / TheCodersCorner.com make this library available for you to use. It takes me significant effort to keep all my libraries current and working on a wide range of boards. Please consider making at least a one off donation via the sponsor button if you find it useful. In forks, please keep text to here intact.
+Dave Cherry / TheCodersCorner.com made this library available for you to use. It takes me significant effort to keep all my libraries current and working on a wide range of boards. Please consider making at least a one off donation via the sponsor button if you find it useful. In forks, please keep text to here intact.
 
 This library provides several useful extensions that make programming Arduino / mbed for non-trivial apps simpler. There are many different practical and familiar examples packaged with it in the `examples` folder. Below I cover each of the main functions briefly with a link to more detailed documentation. The API is almost identical between Arduino and mbed making it easier to port between the two. 
 
@@ -11,10 +11,11 @@ Along with ths quick start guide and the examples also see:
 * [IoAbstraction documentation pages](https://www.thecoderscorner.com/products/arduino-libraries/io-abstraction/)
 * [IoAbstraction reference documentation](https://www.thecoderscorner.com/ref-docs/ioabstraction/html)
 
-There is a forum where questions can be asked, but the rules of engagement are: **this is my hobby, I make it available because it helps others**. Don't expect immediate answers, make sure you've recreated the problem in a simple sketch that you can send to me. Please consider making at least a one time donation using the sponsor link above before using the forum.
+You can ask questions either in the discussions section of this repo, or using the Arduino forum. We generally answer most questions, but the rules of engagement are: **this is my hobby, I make it available because it helps others**. Don't expect immediate answers, make sure you've recreated the problem in a simple sketch that you can send to me. Please consider making at least a one time donation using the sponsor link if we do help you out.
 
-* [TCC Libraries community discussion forum](https://www.thecoderscorner.com/jforum/)
-* I also monitor the Arduino forum [https://forum.arduino.cc/], Arduino related questions can be asked there too.
+* [discussions section of the IoAbstraction repo](https://github.com/davetcc/IoAbstraction/discussions)
+* [Arduino discussion forum](https://forum.arduino.cc/) where questions can be asked, please tag me using `@davetcc`.
+* [Legacy discussion forum probably to be made read only soon](https://www.thecoderscorner.com/jforum/).
 
 ## Installation for Arduino IDE
 
@@ -30,9 +31,9 @@ Take a look at the [TaskManagerIO repo](https://github.com/davetcc/TaskManagerIO
 
 Also, this library uses [SimpleCollections](https://github.com/davetcc/SimpleCollections) within switches and a few other areas.
 
-## BasicIoAbstraction - easily interchange between pins, PCF8574, PCF8575, MCP23017 and shift registers.
+## BasicIoAbstraction - Arduino like interface to pins, PCF8574, PCF8575, MCP23017, AW9523 and shift registers.
 
-Lets you choose to use Arduino pins, shift register Input/Output, PCF8574, PCF8575, i2c and MCP23017 i2c in an inter-changable way. Use it in your sketch to treat shift registers or i2c expanders like pins. There's even an abstraction that can combine together Arduino pins and one or more other expander! See the documentation (link further up) for more details.
+Lets you choose to use Arduino pins, shift register Input/Output, I2C PCF8574/PCF8575, AW9523, and MCP23017 in an inter-changable way. Use it in your sketch to treat shift registers or i2c expanders like pins. There's even an abstraction that can combine together Arduino pins and one or more other expander! See the documentation (link further up) for more details.
 
 If you are building a library and want it to work with either Arduino pins, shift registers or an IO expander for IO, then this library is probably a good starting point.
 
@@ -44,23 +45,28 @@ If we want to use the i2c wire based ioFrom8574 we must include the wire header 
 
 At the global level (outside of any function) we create an i2c expander on address 0x20:
 
-	IoAbstractionRef ioExpander = ioFrom8574(0x20);
-	IoAbstractionRef ioExpander = ioFrom8575(0x20);
-
-
-Or for Arduino pins instead..
+	PCF8574IoAbstraction io8574(0x20, 0);
+	PCF8574IoAbstraction io8575(address, interruptPin, wireInstance, mode16Bit, invertedLogic);
 	
-	IoAbstractionRef ioUsingArduino();
+If you use an I2C variant, you must initialise wire before using
+
+	Wire.begin();  
+
+Or for Arduino pins instead simply call the following:
+	
+	internalDigitalDevice()
+	
+You can convert any Io-device object into an IoAbstractionRef as follows
+
+	IoAbstractionRef myRef = asIoRef(io8574);
 
 And lastly for DfRobot LCD shield input we use (requires library V1.3.2 at least):
 
-	IoAbstractionRef inputFromDfRobotShield();   // for all other versions
-	IoAbstractionRef inputFromDfRobotShieldV1(); // for version 1
+	DfRobotInputAbstraction dfRobotKeys(dfRobotAvrRanges); // or dfRobotV1AvrRanges as appropriate
 
-In setup we set it's first IO pin to input and start the Wire library:
-	
-	Wire.begin();  
- 	ioDevicePinMode(ioExpander, 0, INPUT);
+To configure pin direction on any expander, you use the following, although some devices are read or write only, you should still call pinMode:
+
+ 	ioExpander.pinMode(0, INPUT);
   
 And then later we read from it, in this case as we are doing a single read, use the 'S' version of the method as it removes the need to call the sync method. The only limitation is we must synchronize the device state. This allows us to be efficient where possible, setting several pins, syncing and then reading pins.
 
@@ -68,10 +74,10 @@ And then later we read from it, in this case as we are doing a single read, use 
 
 Let's now say we wanted to write one value and read two items on the same device, in this case we don't use the 'S' version of the method, because otherwise it would sync three times.
 
-	ioDeviceDigitalWrite(ioExpander, outputPin, HIGH);
-	ioDeviceSync(ioExpander);
-	int read1 = ioDeviceDigitalRead(ioExpander, inputPin1);
-	int read2 = ioDeviceDigitalRead(ioExpander, inputPin2);
+	ioExpander.digitalWrite(outputPin, HIGH);
+	ioExpander.sync();
+	int read1 = ioExpander.digitalRead(inputPin1);
+	int read2 = ioExpander.digitalRead(inputPin2);
 
 ## SwitchInput - buttons that are debounced with event based callbacks
 
@@ -262,7 +268,7 @@ Alongside the example, there is comprehensive documentation describing the use o
 
 ## Inbuilt Unit testing framework and mocking
 
-IoAbstraction has a very simple unit test framework built into it, it works on a very wide range of boards, more or less everything in our supported list. In addition to this there are mock versions of some components to make testing your code easier. See https://www.thecoderscorner.com/products/arduino-libraries/io-abstraction/ioabstraction-troubleshooting-unit-testing/
+IoAbstraction has a very simple unit test framework built into it, it works on a very wide range of boards, more or less everything in our supported list. In addition to this there are mock versions of some components to make testing your code easier. See https://www.thecoderscorner.com/products/arduino-libraries/io-abstraction/simple-test-unit-test-arduino-mbed/
 
 ## ESP32 extras mode
 

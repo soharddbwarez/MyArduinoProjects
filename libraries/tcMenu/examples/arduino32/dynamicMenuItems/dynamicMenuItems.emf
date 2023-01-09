@@ -385,6 +385,11 @@
         "subsystem": "DISPLAY"
       },
       {
+        "name": "DISPLAY_BUFFER_SIZE",
+        "latestValue": "20",
+        "subsystem": "DISPLAY"
+      },
+      {
         "name": "MK_KEYBOARD_NEXT",
         "latestValue": "B",
         "subsystem": "INPUT"
@@ -516,12 +521,12 @@
       },
       {
         "name": "ITEM_FONT",
-        "latestValue": "def:,1",
+        "latestValue": "ada:OpenSansCyrillicLatin12,0",
         "subsystem": "THEME"
       },
       {
         "name": "TITLE_FONT",
-        "latestValue": "def:,1",
+        "latestValue": "ada:OpenSansCyrillicLatin12,0",
         "subsystem": "THEME"
       },
       {
@@ -532,6 +537,11 @@
       {
         "name": "TITLE_SHOW_MODE",
         "latestValue": "TITLE_FIRST_ROW",
+        "subsystem": "THEME"
+      },
+      {
+        "name": "USE_TC_UNICODE",
+        "latestValue": "true",
         "subsystem": "THEME"
       },
       {
@@ -551,8 +561,8 @@
     "eepromDefinition": "",
     "authenticatorDefinition": "",
     "projectIoExpanders": [
-      "deviceIO:",
-      "mcp23017:io23017:32:10"
+      "mcp23017:io23017:32:10",
+      "deviceIO:"
     ],
     "menuInMenuCollection": {
       "menuDefinitions": []

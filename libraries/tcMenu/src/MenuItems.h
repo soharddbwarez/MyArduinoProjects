@@ -5,13 +5,10 @@
 
 /**
  * @file MenuItems.h
- * 
- * In TcMenu, MenuItem storage is shared between program memory and RAM. Usually each MenuItem has associated Info block and
+ * @brief In TcMenu, MenuItem storage is shared between program memory and RAM. Usually each MenuItem has associated Info block and
  * within the InfoBlock, the first fields must be in the same order as AnyMenuInfo. The most commonly used menu items are
  * defined within this file. Each menu item also has a menu item type that is used during rendering and remote communication
  * to determine what it actually is.
- * 
- * Most of the editable menu items can stored to EEPROM, including AnalogMenuItem, EnumMenuItem, BooleanMenuItem and TextMenuItem
  */
 
 #ifndef _MENUITEMS_h
@@ -31,7 +28,14 @@ typedef uint16_t menuid_t;
 #define INVALID_MENU_ID 0xffff
 
 /** the size of each name in program memory */
+#ifndef NAME_SIZE_T
 #define NAME_SIZE_T 20
+#endif // NAME_SIZE_T
+
+/** the size of each unit field in program memory */
+#ifndef UNIT_SIZE_T
+#define UNIT_SIZE_T 5
+#endif // NAME_SIZE_T
 
 /** the value that represents no call back */
 #define NO_CALLBACK NULL
@@ -90,7 +94,7 @@ struct AnalogMenuInfo {
 	/**
 	 * An optional unit name to be presented after the the value. For example V for volts, dB for decibel.
 	 */
-	char unitName[5];
+	char unitName[UNIT_SIZE_T];
 };
 
 /**

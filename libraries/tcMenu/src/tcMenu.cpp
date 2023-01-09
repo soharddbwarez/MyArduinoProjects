@@ -54,7 +54,7 @@ void MenuManager::performDirectionMove(bool dirIsBack) {
         int editorRange = dirIsBack ? editableItem->previousPart() : editableItem->nextPart();
 		if (editorRange != 0) {
 			switches.changeEncoderPrecision(0, editorRange, editableItem->getPartValueAsInt(),
-                                            isWrapAroundEncoder(editableItem));
+                                            isWrapAroundEncoder(editableItem), 1);
 		}
         else {
             stopEditingCurrentItem(false);
@@ -101,17 +101,26 @@ void MenuManager::valueChanged(int value) {
         reinterpret_cast<ListRuntimeMenuItem*>(menuMgr.getCurrentMenu())->setActiveIndex(value);
     }
 	else {
-        MenuItem* currentActive = menuMgr.findCurrentActive();
-        currentActive->setActive(false);
         if(renderer->getRendererType() != RENDER_TYPE_NOLOCAL) {
             serlogF2(SER_TCMENU_DEBUG, "activate item ", value);
-            currentActive = reinterpret_cast<BaseMenuRenderer*>(renderer)->getMenuItemAtIndex(getCurrentMenu(), value);
+            auto currentActive = reinterpret_cast<BaseMenuRenderer*>(renderer)->getMenuItemAtIndex(getCurrentMenu(), value);
             if(currentActive) {
-                currentActive->setActive(true);
+                setItemActive(currentActive);
                 serlogF3(SER_TCMENU_DEBUG, "Change active (V, ID) ", value, currentActive->getId());
             }
         }
 	}
+}
+
+void MenuManager::setItemActive(MenuItem* item) {
+    if(item) {
+        auto oldActive = findCurrentActive();
+        if(oldActive) oldActive->setActive(false);
+        item->setActive(true);
+        for(auto n : structureNotifier) {
+            if(n) n->activeItemHasChanged(item);
+        }
+    }
 }
 
 /**
@@ -146,7 +155,7 @@ void MenuManager::actionOnSubMenu(MenuItem* nextSub) {
 		navigateToMenu(popup->getRootItem(), popup->getItemToActivate(), true);
 	}
 	else {
-		navigateToMenu(subMenu->getChild());
+		navigateToMenu(subMenu->getChild(), findCurrentActive());
 	}
 }
 
@@ -203,7 +212,7 @@ void MenuManager::stopEditingCurrentItem(bool doMultiPartNext) {
 		int editorRange = editableItem->nextPart();
 		if (editorRange != 0) {
 			switches.changeEncoderPrecision(0, editorRange, editableItem->getPartValueAsInt(),
-                                            isWrapAroundEncoder(editableItem));
+                                            isWrapAroundEncoder(editableItem), 1);
 			return;
 		}
 	}
@@ -299,14 +308,15 @@ void MenuManager::setupForEditing(MenuItem* item) {
 	else if (ty == MENUTYPE_SCROLLER_VALUE) {
         setCurrentEditor(item);
 	    switches.changeEncoderPrecision(0, item->getMaximumValue(), reinterpret_cast<ScrollChoiceMenuItem*>(item)->getCurrentValue(),
-                                        isWrapAroundEncoder(currentEditor));
+                                        isWrapAroundEncoder(currentEditor), 1);
 	}
 	else if (isMenuRuntimeMultiEdit(item)) {
         setCurrentEditor(item);
         auto* editableItem = reinterpret_cast<EditableMultiPartMenuItem*>(item);
         editableItem->beginMultiEdit();
         int range = editableItem->nextPart();
-        switches.changeEncoderPrecision(0, range, editableItem->getPartValueAsInt(), editableItem->getId());
+        switches.changeEncoderPrecision(0, range, editableItem->getPartValueAsInt(),
+                                        isWrapAroundEncoder(editableItem), 1);
         switches.getEncoder()->setUserIntention(CHANGE_VALUE);
     }
 }
@@ -378,6 +388,12 @@ void MenuManager::addChangeNotification(MenuManagerObserver *observer) {
             i = observer;
             return;
         }
+    }
+}
+
+void MenuManager::resetObservers() {
+    for(auto& i : structureNotifier) {
+        i= nullptr;
     }
 }
 
@@ -468,9 +484,14 @@ bool MenuManager::isWrapAroundEncoder(MenuItem* menuItem) {
     return useWrapAroundByDefault;
 }
 
-void MenuManager::majorOrderChangeApplied(int newMax) {
-    if(renderer->getRendererType() == RENDER_TYPE_CONFIGURABLE && getCurrentMenu()->getMenuType() != MENUTYPE_RUNTIME_LIST) {
-        setItemsInCurrentMenu(newMax);
+void MenuManager::recalculateListIfOnDisplay(RuntimeMenuItem* runtimeItem) {
+    auto enc = switches.getEncoder();
+    // if there is an encoder, and the current menu is the list..
+    if(enc && navigator.getCurrentRoot() == runtimeItem) {
+        auto newRows = runtimeItem->getNumberOfRows();
+        auto encVal = enc->getCurrentReading();
+        uint8_t newPos = encVal < newRows ? encVal : (newRows - 1);
+        setItemsInCurrentMenu(newRows, newPos);
     }
 }
 

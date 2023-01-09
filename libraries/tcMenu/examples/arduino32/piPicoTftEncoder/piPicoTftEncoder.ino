@@ -1,3 +1,9 @@
+/**
+ * An example that we test regularly on a Raspberry PI Pico (should work on either core), it has a screen based on
+ * the TFT_eSPI library and also a rotary encoder. It demonstrates quite a few features of the library.
+ *
+ * Getting started: https://www.thecoderscorner.com/products/arduino-libraries/tc-menu/tcmenu-overview-quick-start/
+ */
 #include "piPicoTftEncoder_menu.h"
 #include <PlatformDetermination.h>
 #include <IoLogging.h>
@@ -21,10 +27,9 @@ const char* fileNames[] = {
 void onTitlePressed(int);
 
 void setup() {
-    // Initialise serial for logging
-    // If you're using a pico probe, set build flag LoggingPort=Serial1 and initialise serial port 1.
-    //Serial.begin(115200);
-    Serial1.begin(115200);
+    // This example logs using IoLogging, see the following guide to enable
+    // https://www.thecoderscorner.com/products/arduino-libraries/io-abstraction/arduino-logging-with-io-logging/
+    IOLOG_START_SERIAL
 
     // This is added by the code generator, it initialises the menu
     setupMenu();
@@ -40,7 +45,8 @@ void setup() {
     }, NO_REPEAT);
 
     // and initialise the list menu item with the number of rows, see the list callback function below
-    menuRootList.setNumberOfRows(FILE_NAME_SIZE);
+    // we set the number of items to all the files plus the refresh item
+    menuRootList.setNumberOfRows(FILE_NAME_SIZE + 1);
 }
 
 void loop() {
@@ -149,16 +155,32 @@ void CALLBACK_FUNCTION onShowDialogs(int) {
 int CALLBACK_FUNCTION fnRootListRtCall(RuntimeMenuItem* item, uint8_t row, RenderFnMode mode, char* buffer, int bufferSize) {
    switch(mode) {
     case RENDERFN_INVOKE:
-        serlogF2(SER_DEBUG, "List invoke: ", row);
-        menuMgr.resetMenu(false); // drop back one level dismissing the list
-        reinterpret_cast<ListRuntimeMenuItem*>(item)->asParent();
+        // we have a list of files and a refresh option at the end.
+        if(row < FILE_NAME_SIZE) {
+            // a file has been selected, dismiss list.
+            serlogF2(SER_DEBUG, "List invoke: ", row);
+            menuMgr.resetMenu(false); // drop back one level dismissing the list
+            reinterpret_cast<ListRuntimeMenuItem *>(item)->asParent();
+        } else {
+            // refresh was selected, refresh and force recalc.
+            item->setNumberOfRows(item->getNumberOfRows() + 1);
+            menuMgr.recalculateListIfOnDisplay(item);
+        }
         return true;
     case RENDERFN_NAME:
         strncpy(buffer, "Choose File", bufferSize);
         return true;
     case RENDERFN_VALUE:
-        if(row < FILE_NAME_SIZE) {
+        if(row == LIST_PARENT_ITEM_POS) {
+            // no value on the parent item, IE when this list is displayed in a parent menu.
+            buffer[0]=0;
+        } else if(row < FILE_NAME_SIZE) {
+            // copy the file name into the buffer
             strncpy(buffer, fileNames[row], bufferSize);
+        } else if(row == FILE_NAME_SIZE) {
+            strcpy(buffer, "Add more");
+        } else {
+            ltoaClrBuff(buffer, row, 4, '0', bufferSize);
         }
         return true;
     case RENDERFN_EEPROM_POS: return 0xffff; // lists are generally not saved to EEPROM

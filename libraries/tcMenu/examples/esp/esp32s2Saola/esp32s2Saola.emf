@@ -385,6 +385,11 @@
         "subsystem": "DISPLAY"
       },
       {
+        "name": "USE_UTF8_SUPPORT",
+        "latestValue": "true",
+        "subsystem": "DISPLAY"
+      },
+      {
         "name": "SW_POLLING_MODE",
         "latestValue": "SWITCHES_POLL_EVERYTHING",
         "subsystem": "INPUT"
@@ -477,6 +482,11 @@
       {
         "name": "TITLE_SHOW_MODE",
         "latestValue": "TITLE_ALWAYS",
+        "subsystem": "THEME"
+      },
+      {
+        "name": "USE_TC_UNICODE",
+        "latestValue": "false",
         "subsystem": "THEME"
       }
     ],

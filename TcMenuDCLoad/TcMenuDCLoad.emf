@@ -1,6 +1,6 @@
 {
   "version": "1.00",
-  "projectName": "F:\\Documents\\Arduino\\TcMenuDCLoad\\TcMenuDCLoad.emf",
+  "projectName": "H:\\Documents\\Arduino\\TcMenuDCLoad\\TcMenuDCLoad.emf\nFirst use of TcMenu Designer for my DIY DC Load analog/digital combo",
   "author": "ricar",
   "items": [
     {
@@ -45,7 +45,7 @@
         "id": 3,
         "eepromAddress": -1,
         "functionName": "TogglePin13",
-        "readOnly": false,
+        "readOnly": true,
         "localOnly": false,
         "visible": true
       }
@@ -77,6 +77,66 @@
         "id": 5,
         "eepromAddress": 2,
         "functionName": "SelectControl",
+        "readOnly": true,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 4,
+      "type": "scrollItem",
+      "item": {
+        "itemWidth": 10,
+        "eepromOffset": 0,
+        "numEntries": 0,
+        "choiceMode": "ARRAY_IN_EEPROM",
+        "name": "ScreenBrightness",
+        "variableName": "SettingsScreenBrightness",
+        "id": 6,
+        "eepromAddress": 4,
+        "functionName": "SetScreenBrightness",
+        "readOnly": true,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 4,
+      "type": "actionMenu",
+      "item": {
+        "name": "Max V",
+        "variableName": "SettingsMaxV",
+        "id": 7,
+        "eepromAddress": -1,
+        "functionName": "SetMaxV",
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 4,
+      "type": "actionMenu",
+      "item": {
+        "name": "Max A",
+        "variableName": "SettingsMaxA",
+        "id": 8,
+        "eepromAddress": -1,
+        "functionName": "SetMaxA",
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 4,
+      "type": "actionMenu",
+      "item": {
+        "name": "Max P",
+        "variableName": "SettingsMaxP",
+        "id": 9,
+        "eepromAddress": -1,
+        "functionName": "SetMaxP",
         "readOnly": false,
         "localOnly": false,
         "visible": true
@@ -177,9 +237,9 @@
       }
     ],
     "namingRecursive": true,
-    "saveToSrc": false,
+    "saveToSrc": true,
     "useCppMain": false,
-    "eepromDefinition": "",
+    "eepromDefinition": "eeprom:",
     "authenticatorDefinition": "",
     "projectIoExpanders": [
       "deviceIO:"

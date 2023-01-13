@@ -1,10 +1,4 @@
-#include <WiFiManager.h>
-#include <strings_en.h>
-#include <wm_consts_en.h>
-#include <wm_strings_en.h>
-
-#include <DoubleResetDetect.h>
-
+#include <ESPAsync_WiFiManager.h>  
 #include <SPI.h>
 #include <TFT_eSPI.h>
 #include <WiFi.h>
@@ -14,6 +8,7 @@
 #include "Orbitron_Medium_20.h"
 #include "ani.h"
 #include "env.h"
+#include "ConfigPortal.h"
 
 // Define colors for display
 #define TFT_GREY 0x5AEB

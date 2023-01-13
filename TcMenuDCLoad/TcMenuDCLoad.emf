@@ -1,19 +1,19 @@
 {
   "version": "1.00",
-  "projectName": "H:\\Documents\\Arduino\\TcMenuDCLoad\\TcMenuDCLoad.emf\nFirst use of TcMenu Designer for my DIY DC Load analog/digital combo",
+  "projectName": "First use of TcMenu Designer for my DIY DC Load analog/digital combo",
   "author": "ricar",
   "items": [
     {
       "parentId": 0,
-      "type": "textItem",
+      "type": "floatItem",
+      "defaultValue": "0.0",
       "item": {
-        "textLength": 5,
-        "itemType": "PLAIN_TEXT",
-        "name": "Volt",
-        "variableName": "Volt",
+        "numDecimalPlaces": 3,
+        "name": "Voltage",
+        "variableName": "Voltage",
         "id": 1,
         "eepromAddress": -1,
-        "functionName": "GetVoltage",
+        "functionName": "GetV",
         "readOnly": true,
         "localOnly": false,
         "visible": true
@@ -21,15 +21,15 @@
     },
     {
       "parentId": 0,
-      "type": "textItem",
+      "type": "floatItem",
+      "defaultValue": "0.0",
       "item": {
-        "textLength": 5,
-        "itemType": "PLAIN_TEXT",
-        "name": "Amps",
-        "variableName": "Amps",
+        "numDecimalPlaces": 3,
+        "name": "Amperage",
+        "variableName": "Amperage",
         "id": 2,
         "eepromAddress": -1,
-        "functionName": "GetAmps",
+        "functionName": "GetA",
         "readOnly": true,
         "localOnly": false,
         "visible": true
@@ -38,6 +38,7 @@
     {
       "parentId": 0,
       "type": "boolItem",
+      "defaultValue": "false",
       "item": {
         "naming": "ON_OFF",
         "name": "DC Load",
@@ -45,6 +46,55 @@
         "id": 3,
         "eepromAddress": -1,
         "functionName": "TogglePin13",
+        "readOnly": true,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 0,
+      "type": "textItem",
+      "defaultValue": "",
+      "item": {
+        "textLength": 5,
+        "itemType": "TIME_DURATION_HUNDREDS",
+        "name": "Run Time",
+        "variableName": "RunTime",
+        "id": 10,
+        "eepromAddress": 21,
+        "functionName": "ResetRunTime",
+        "readOnly": true,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 0,
+      "type": "floatItem",
+      "defaultValue": "0.0",
+      "item": {
+        "numDecimalPlaces": 3,
+        "name": "Accumulated mAh",
+        "variableName": "AccumulatedmAh",
+        "id": 11,
+        "eepromAddress": -1,
+        "functionName": "GetmAh",
+        "readOnly": true,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 0,
+      "type": "floatItem",
+      "defaultValue": "0.0",
+      "item": {
+        "numDecimalPlaces": 3,
+        "name": "Accumulated Wh",
+        "variableName": "AccumulatedWh",
+        "id": 12,
+        "eepromAddress": -1,
+        "functionName": "GetWh",
         "readOnly": true,
         "localOnly": false,
         "visible": true
@@ -67,6 +117,7 @@
     {
       "parentId": 4,
       "type": "enumItem",
+      "defaultValue": "0",
       "item": {
         "enumEntries": [
           "Analog",
@@ -85,6 +136,7 @@
     {
       "parentId": 4,
       "type": "scrollItem",
+      "defaultValue": "0-No entries",
       "item": {
         "itemWidth": 10,
         "eepromOffset": 0,
@@ -102,12 +154,15 @@
     },
     {
       "parentId": 4,
-      "type": "actionMenu",
+      "type": "textItem",
+      "defaultValue": "",
       "item": {
-        "name": "Max V",
-        "variableName": "SettingsMaxV",
+        "textLength": 5,
+        "itemType": "PLAIN_TEXT",
+        "name": "Max Voltage",
+        "variableName": "SettingsMaxVoltage",
         "id": 7,
-        "eepromAddress": -1,
+        "eepromAddress": 6,
         "functionName": "SetMaxV",
         "readOnly": false,
         "localOnly": false,
@@ -116,12 +171,15 @@
     },
     {
       "parentId": 4,
-      "type": "actionMenu",
+      "type": "textItem",
+      "defaultValue": "",
       "item": {
-        "name": "Max A",
-        "variableName": "SettingsMaxA",
+        "textLength": 5,
+        "itemType": "PLAIN_TEXT",
+        "name": "Max Amperage",
+        "variableName": "SettingsMaxAmperage",
         "id": 8,
-        "eepromAddress": -1,
+        "eepromAddress": 11,
         "functionName": "SetMaxA",
         "readOnly": false,
         "localOnly": false,
@@ -130,12 +188,15 @@
     },
     {
       "parentId": 4,
-      "type": "actionMenu",
+      "type": "textItem",
+      "defaultValue": "",
       "item": {
-        "name": "Max P",
-        "variableName": "SettingsMaxP",
+        "textLength": 5,
+        "itemType": "PLAIN_TEXT",
+        "name": "Max Power",
+        "variableName": "SettingsMaxPower",
         "id": 9,
-        "eepromAddress": -1,
+        "eepromAddress": 16,
         "functionName": "SetMaxP",
         "readOnly": false,
         "localOnly": false,
@@ -191,13 +252,8 @@
         "subsystem": "DISPLAY"
       },
       {
-        "name": "PULLUP_LOGIC",
-        "latestValue": "true",
-        "subsystem": "INPUT"
-      },
-      {
-        "name": "INTERRUPT_SWITCHES",
-        "latestValue": "true",
+        "name": "SW_POLLING_MODE",
+        "latestValue": "SWITCHES_POLL_EVERYTHING",
         "subsystem": "INPUT"
       },
       {
@@ -231,6 +287,11 @@
         "subsystem": "INPUT"
       },
       {
+        "name": "PULLUP_LOGIC",
+        "latestValue": "true",
+        "subsystem": "INPUT"
+      },
+      {
         "name": "ENCODER_IS_QUARTER_CYCLE",
         "latestValue": "false",
         "subsystem": "INPUT"
@@ -238,11 +299,16 @@
     ],
     "namingRecursive": true,
     "saveToSrc": true,
-    "useCppMain": false,
+    "useCppMain": true,
     "eepromDefinition": "eeprom:",
     "authenticatorDefinition": "",
     "projectIoExpanders": [
       "deviceIO:"
-    ]
+    ],
+    "menuInMenuCollection": {
+      "menuDefinitions": []
+    },
+    "packageNamespace": "",
+    "appIsModular": false
   }
 }

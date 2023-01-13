@@ -1,3 +1,10 @@
+#include <WiFiManager.h>
+#include <strings_en.h>
+#include <wm_consts_en.h>
+#include <wm_strings_en.h>
+
+#include <DoubleResetDetect.h>
+
 #include <SPI.h>
 #include <TFT_eSPI.h>
 #include <WiFi.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 https://www.thecoderscorner.com (Nutricherry LTD).
+ * Copyright (c) 2018 https://www.thecoderscorner.com (Dave Cherry).
  * This product is licensed under an Apache license, see the LICENSE file in the top-level directory.
  */
 
@@ -35,6 +35,8 @@ private:
     uint8_t editChar;
     bool drewTitleThisTime;
     bool titleRequired;
+    uint8_t lcdEditorCursorX = 0xFF;
+    uint8_t lcdEditorCursorY = 0xFF;
 public:
 
     LiquidCrystalRenderer(LiquidCrystal& lcd, uint8_t dimX, uint8_t dimY);
@@ -54,6 +56,7 @@ private:
     void renderActionItem(uint8_t row, MenuItem* item);
     void renderBackItem(uint8_t row, MenuItem* item);
     void renderList();
+    void setupEditorPlacement(int32_t x, int32_t y);
 };
 
 class LiquidCrystalDialog : public BaseDialog {

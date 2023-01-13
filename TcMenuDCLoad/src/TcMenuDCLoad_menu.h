@@ -16,8 +16,8 @@
 #include <Wire.h>
 #include <LiquidCrystalIO.h>
 #include <IoAbstractionWire.h>
-#include <ScrollChoiceMenuItem.h>
 #include <RuntimeMenuItem.h>
+#include <ScrollChoiceMenuItem.h>
 #include <IoAbstraction.h>
 #include <ArduinoEEPROMAbstraction.h>
 #include "tcMenuLiquidCrystal.h"
@@ -31,26 +31,32 @@ extern LiquidCrystalRenderer renderer;
 
 
 // Global Menu Item exports
-extern ActionMenuItem menuSettingsMaxP;
-extern ActionMenuItem menuSettingsMaxA;
-extern ActionMenuItem menuSettingsMaxV;
+extern TextMenuItem menuSettingsMaxPower;
+extern TextMenuItem menuSettingsMaxAmperage;
+extern TextMenuItem menuSettingsMaxVoltage;
 extern ScrollChoiceMenuItem menuSettingsScreenBrightness;
 extern EnumMenuItem menuSettingsSelectControl;
 extern BackMenuItem menuBackSettings;
 extern SubMenuItem menuSettings;
+extern FloatMenuItem menuAccumulatedWh;
+extern FloatMenuItem menuAccumulatedmAh;
+extern TimeFormattedMenuItem menuRunTime;
 extern BooleanMenuItem menuDCLoad;
-extern TextMenuItem menuAmps;
-extern TextMenuItem menuVolt;
+extern FloatMenuItem menuAmperage;
+extern FloatMenuItem menuVoltage;
 
 // Provide a wrapper to get hold of the root menu item and export setupMenu
-inline MenuItem& rootMenuItem() { return menuVolt; }
+inline MenuItem& rootMenuItem() { return menuVoltage; }
 void setupMenu();
 
 // Callback functions must always include CALLBACK_FUNCTION after the return type
 #define CALLBACK_FUNCTION
 
-void CALLBACK_FUNCTION GetAmps(int id);
-void CALLBACK_FUNCTION GetVoltage(int id);
+void CALLBACK_FUNCTION GetA(int id);
+void CALLBACK_FUNCTION GetV(int id);
+void CALLBACK_FUNCTION GetWh(int id);
+void CALLBACK_FUNCTION GetmAh(int id);
+void CALLBACK_FUNCTION ResetRunTime(int id);
 void CALLBACK_FUNCTION SelectControl(int id);
 void CALLBACK_FUNCTION SetMaxA(int id);
 void CALLBACK_FUNCTION SetMaxP(int id);

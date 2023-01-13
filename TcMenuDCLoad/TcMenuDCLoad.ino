@@ -1,40 +1,52 @@
 #include "TcMenuDCLoad_menu.h"
-#include <BaseDialog.h>
-#include <BaseRenderers.h>
-#include <EditableLargeNumberMenuItem.h>
-#include <EepromItemStorage.h>
-#include <GfxMenuConfig.h>
-#include <MenuHistoryNavigator.h>
-#include <MenuItems.h>
-#include <MenuIterator.h>
-#include <MessageProcessors.h>
-#include <RemoteAuthentication.h>
-#include <RemoteConnector.h>
-#include <RemoteMenuItem.h>
-#include <RemoteTypes.h>
-#include <RuntimeMenuItem.h>
-#include <ScrollChoiceMenuItem.h>
-#include <SecuredMenuPopup.h>
-#include <tcMenu.h>
-#include <tcMenuKeyboard.h>
-#include <tcMenuVersion.h>
-#include <tcUtil.h>
-
-// default CPP main file for sketch
-#include <PlatformDetermination.h>
-
-#include <TaskManagerIO.h>
 
 void setup() {
     setupMenu();
+
 }
 
 void loop() {
     taskManager.runLoop();
+
+}
+
+
+void CALLBACK_FUNCTION TogglePin13(int id) {
+    // TODO - your menu change code
+}
+
+
+void CALLBACK_FUNCTION SelectControl(int id) {
+    // TODO - your menu change code
+}
+
+
+void CALLBACK_FUNCTION GetAmps(int id) {
+    // TODO - your menu change code
+}
+
+
+void CALLBACK_FUNCTION SetScreenBrightness(int id) {
+    // TODO - your menu change code
+}
+
+
+void CALLBACK_FUNCTION SetMaxP(int id) {
+    // TODO - your menu change code
+}
+
+
+void CALLBACK_FUNCTION SetMaxA(int id) {
+    // TODO - your menu change code
 }
 
 
 
-void CALLBACK_FUNCTION TogglePin13(int id) {
+void CALLBACK_FUNCTION SetMaxV(int id) {
+    // TODO - your menu change code
+}
+
+
+void CALLBACK_FUNCTION GetVoltage(int id) {
     // TODO - your menu change code
 }

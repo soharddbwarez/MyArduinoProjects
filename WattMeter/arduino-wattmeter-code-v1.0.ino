@@ -9,8 +9,8 @@
 /*********** Calibration & Hardware Data ***********/
 float Vdiv = 101.0;        // Voltage conversion factor
 float Cdiv = 10.0;         // Current conversion factor
-const byte LCDlines = 2;   // LCD: Number of lines
-const byte LCDwidth = 16;  // LCD: Number of character per line
+const byte LCDlines = 4;   // LCD: Number of lines
+const byte LCDwidth = 20;  // LCD: Number of character per line
 /***************************************************/
 
 const float adcSense = 1.074219e-3;   // ADC conversion factor volt/bit (1.1V / 1024)

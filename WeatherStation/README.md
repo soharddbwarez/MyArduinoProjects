@@ -41,32 +41,26 @@ of documentation to get familiar with the code, turns out that it's not that eas
 because of the many different libraries forked from each other so I hope that I've got all the right parts
 together now to make this work.
 
-## Here's How It Works
-The Async_ConfigOnSwitch (https://github.com/khoih-prog/ESPAsync_WiFiManager/blob/master/examples/Async_ConfigOnSwitch) 
-example shows how it works and should be used as the basis for a sketch that uses this library.
-
-The concept of Async_ConfigOnSwitch is that a new ESP32 / ESP8266 will start a WiFi ConfigPortal when powered up and 
-save the configuration data in non volatile memory. Thereafter, the ConfigPortal will only be started again if a 
-button is pushed on the ESP32 / ESP8266 module.
-
-Using any WiFi enabled device with a browser (computer, phone, tablet) connect to the newly created Access Point (AP) 
-using configurable SSID and Password (specified in sketch)
-
-// SSID and PW for Config Portal
-String ssid = "ESP_" + String(ESP_getChipId(), HEX);
-const char* password = "your_password";
-
-then connect WebBrowser to configurable ConfigPortal IP address, default is 192.168.4.1
-
-Choose one of the access points scanned, enter password, click Save. ESP will restart, then try to connect to the 
-WiFi netwotk using STA-only mode, without running the ConfigPortal WebServer and WiFi AP. 
-See Accessing manager after connection (https://github.com/khoih-prog/ESP_WiFiManager/issues/15).
-
-Because I want to keep the part that's already working on the TTGO board separated I'll add this part in a new file 
-"ConfigPortal.h" that needs to be included in the main program file using the quotes "" instead of the hooks <>
-since the file is in the same directory as the main program.
-
-My new file will be replacing the env.h file when I have it working but I'm using Git to update my online
-repositories so it will all be updated for you automatically, hopefully to a better working program.
-
-I hope that I can get this working so I can share it with you here.
+#How It Works
+This information can be found on GitHub here: https://github.com/khoih-prog/ESP_WiFiManager_Lite#how-it-works
+ - The ESP_WiFi example shows how it works and should be used as the basis for a sketch that uses this library.
+ - The concept of ESP_WiFi is that a new ESP32/ESP8266 WiFi will start a WiFi configuration portal when powered up, 
+   but has no valid stored Credentials or can't connect to WiFi APs after a pre-determined time.
+ - There are 6 more custom parameters added in the sketch which you can use in your program later. In the example, 
+   they are: 2 sets of Blynk Servers and Tokens, Blynk Port and MQTT Server.
+ - Using any WiFi enabled device with a browser (computer, phone, tablet) connect to the newly created AP and type 
+   in the configurable AP IP address (default 192.168.4.1). The Config Portal AP channel (default 10) is also 
+   configurable to avoid conflict with other APs.
+ - The Config Portal is auto-adjusted to fix the 4 static parameters (WiFi SSIDs/PWDs) as well as 6 more 
+   dynamic custom parameters.
+ - After the custom data entered, and Save button pressed, the configuration data will be saved in host's 
+   non-volatile memory, then the board reboots.
+ - If there is valid stored Credentials, it'll go directly to connect to one of the MultiWiFi APs without 
+   starting / using the Config Portal.
+ - ESP32/ESP8266 WiFi will try to connect. If successful, the dynamic DHCP and/or configured static IP address 
+   will be displayed in the configuration portal.
+ - The ESP32/ESP8266 WiFi Config Portal network and Web Server will shutdown to return control to the sketch code.
+ - In the operation, if the current WiFi connection is lost because of any reason, the system will auto(Re)connect 
+   to the remaining WiFi AP.
+ - If system can't connect to any of the 2 WiFi APs, the Config Portal will start, after some pre-determined time, 
+   to permit user to update the Credentials.

@@ -9,7 +9,7 @@
   Built by Khoi Hoang https://github.com/khoih-prog/ESPAsync_WiFiManager_Lite
   Licensed under MIT license
 
-  Version: 1.10.1
+  Version: 1.10.2
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -28,6 +28,7 @@
   1.9.0   K Hoang      09/09/2022  Fix ESP32 chipID and add getChipOUI()
   1.9.1   K Hoang      28/12/2022  Add Captive Portal using AsyncDNSServer
   1.10.1  K Hoang      12/01/2023  Added public methods to load and save dynamic data. Bump up to v1.10.1
+  1.10.2  K Hoang      15/01/2023  Add Config Portal scaling support to mobile devices
  *****************************************************************************************************************************/
 
 #pragma once
@@ -62,13 +63,13 @@
 ///////////////////////////////////////////
 
 #ifndef ESP_ASYNC_WIFI_MANAGER_LITE_VERSION
-  #define ESP_ASYNC_WIFI_MANAGER_LITE_VERSION             "ESPAsync_WiFiManager_Lite v1.10.1"
+  #define ESP_ASYNC_WIFI_MANAGER_LITE_VERSION             "ESPAsync_WiFiManager_Lite v1.10.2"
 
   #define ESP_ASYNC_WIFI_MANAGER_LITE_VERSION_MAJOR       1
   #define ESP_ASYNC_WIFI_MANAGER_LITE_VERSION_MINOR       10
-  #define ESP_ASYNC_WIFI_MANAGER_LITE_VERSION_PATCH       1
+  #define ESP_ASYNC_WIFI_MANAGER_LITE_VERSION_PATCH       2
 
-  #define ESP_ASYNC_WIFI_MANAGER_LITE_VERSION_INT         1010001
+  #define ESP_ASYNC_WIFI_MANAGER_LITE_VERSION_INT         1010002
 #endif
 
 ///////////////////////////////////////////
@@ -427,7 +428,7 @@ extern ESP_WM_LITE_Configuration defaultConfig;
 
 // -- HTML page fragments
 
-const char ESP_WM_LITE_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>ESP_ASYNC_WM_LITE</title>";
+const char ESP_WM_LITE_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>ESP_ASYNC_WM_LITE</title><meta name='viewport' content='width=device-width, initial-scale=1'>";
 
 const char ESP_WM_LITE_HTML_HEAD_STYLE[] /*PROGMEM*/ =
   "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
@@ -1393,7 +1394,7 @@ class ESPAsync_WiFiManager_Lite
 #endif
 
 #if USING_CORS_FEATURE
-    const char* _CORS_Header        = WM_HTTP_CORS_ALLOW_ALL;   //"*";
+    const char* _CORS_Header        = WM_HTTP_CORS_ALLOW_ALL;   // "*";
 #endif
 
     //////////////////////////////////////
@@ -2656,6 +2657,7 @@ class ESPAsync_WiFiManager_Lite
 #endif
 
 #if SCAN_WIFI_NETWORKS
+
       ESP_WML_LOGDEBUG1(WiFiNetworksFound, F(" SSIDs found, generating HTML now"));
       // Replace HTML <input...> with <select...>, based on WiFi network scan in startConfigurationMode()
 
@@ -2683,9 +2685,7 @@ class ESPAsync_WiFiManager_Lite
       ESP_WML_LOGDEBUG1(F("pitem:"), pitem);
       pitem.replace("[[input_id1]]", "<input id='id1' list='SSIDs'>" + String(ESP_WM_LITE_DATALIST_START) + "'SSIDs'>" +
                     ListOfSSIDs + ESP_WM_LITE_DATALIST_END);
-
       ESP_WML_LOGDEBUG1(F("pitem:"), pitem);
-
 #else
       pitem.replace("[[input_id]]",  "<select id='id'>"  + ListOfSSIDs + ESP_WM_LITE_SELECT_END);
       pitem.replace("[[input_id1]]", "<select id='id1'>" + ListOfSSIDs + ESP_WM_LITE_SELECT_END);

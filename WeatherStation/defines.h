@@ -16,14 +16,14 @@
 #endif
 
 /* Comment this out to disable prints and save space */
-#define ESP_WM_LITE_DEBUG_OUTPUT      Serial
+// #define ESP_WM_LITE_DEBUG_OUTPUT      Serial
 
-#define _ESP_WM_LITE_LOGLEVEL_        2
+// #define _ESP_WM_LITE_LOGLEVEL_        2
 
 // use builtin LED to show configuration mode
-#define USE_LED_BUILTIN               true
+#define USE_LED_BUILTIN               false
 
-#define USING_MRD                     true
+#define USING_MRD                     false
 
 #if USING_MRD
   #define MULTIRESETDETECTOR_DEBUG      true
@@ -72,9 +72,9 @@
 /////////////////////////////////////////////
 
 // Add customs headers from v1.2.0
-#define USING_CUSTOMS_STYLE           true
-#define USING_CUSTOMS_HEAD_ELEMENT    true
-#define USING_CORS_FEATURE            true
+#define USING_CUSTOMS_STYLE           false
+#define USING_CUSTOMS_HEAD_ELEMENT    false
+#define USING_CORS_FEATURE            false
 
 /////////////////////////////////////////////
 
@@ -115,7 +115,7 @@
 
 /////////////////////////////////////////////
 
-#define USE_DYNAMIC_PARAMETERS        true
+#define USE_DYNAMIC_PARAMETERS        false
 
 /////////////////////////////////////////////
 

@@ -9,7 +9,7 @@
   Built by Khoi Hoang https://github.com/khoih-prog/ESP_WiFiManager_Lite
   Licensed under MIT license
 
-  Version: 1.10.2
+  Version: 1.10.5
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -21,6 +21,9 @@
   1.10.0  K Hoang      10/01/2023  Add Captive-Portal feature
   1.10.1  K Hoang      12/01/2023  Added public methods to load and save dynamic data
   1.10.2  K Hoang      15/01/2023  Add Config Portal scaling support to mobile devices
+  1.10.3  K Hoang      19/01/2023  Fix compiler error if EEPROM is used
+  1.10.4  K Hoang      27/01/2023  Using PROGMEM for HTML strings
+  1.10.5  K Hoang      28/01/2023  Using PROGMEM for strings in examples
  *****************************************************************************************************************************/
 
 #pragma once
@@ -29,36 +32,40 @@
 #define ESP_WiFiManager_Lite_h
 
 #if !( defined(ESP8266) ||  defined(ESP32) )
-#error This code is intended to run on the ESP8266 or ESP32 platform! Please check your Tools->Board setting.
+  #error This code is intended to run on the ESP8266 or ESP32 platform! Please check your Tools->Board setting.
 #elif ( ARDUINO_ESP32S2_DEV || ARDUINO_FEATHERS2 || ARDUINO_ESP32S2_THING_PLUS || ARDUINO_MICROS2 || \
         ARDUINO_METRO_ESP32S2 || ARDUINO_MAGTAG29_ESP32S2 || ARDUINO_FUNHOUSE_ESP32S2 || \
         ARDUINO_ADAFRUIT_FEATHER_ESP32S2_NOPSRAM )
-#warning Using ESP32_S2. To follow library instructions to install esp32-s2 core and WebServer Patch
-#define USING_ESP32_S2        true
+  #warning Using ESP32_S2. To follow library instructions to install esp32-s2 core and WebServer Patch
+  #define USING_ESP32_S2        true
 #elif ( ARDUINO_ESP32C3_DEV )
-#if ( defined(ESP_ARDUINO_VERSION_MAJOR) && (ESP_ARDUINO_VERSION_MAJOR >= 2) )
-  #warning Using ESP32_C3 using core v2.0.0+. Either LittleFS, SPIFFS or EEPROM OK.
-#else
-  #warning Using ESP32_C3 using core v1.0.6-. To follow library instructions to install esp32-c3 core. Only SPIFFS and EEPROM OK.
-#endif
+  #if ( defined(ESP_ARDUINO_VERSION_MAJOR) && (ESP_ARDUINO_VERSION_MAJOR >= 2) )
+    #warning Using ESP32_C3 using core v2.0.0+. Either LittleFS, SPIFFS or EEPROM OK.
+  #else
+    #warning Using ESP32_C3 using core v1.0.6-. To follow library instructions to install esp32-c3 core. Only SPIFFS and EEPROM OK.
+  #endif
 
-#warning You have to select Flash size 2MB and Minimal APP (1.3MB + 700KB) for some boards
-#define USING_ESP32_C3        true
+  #warning You have to select Flash size 2MB and Minimal APP (1.3MB + 700KB) for some boards
+  #define USING_ESP32_C3        true
 #elif ( defined(ARDUINO_ESP32S3_DEV) || defined(ARDUINO_ESP32_S3_BOX) || defined(ARDUINO_TINYS3) || \
         defined(ARDUINO_PROS3) || defined(ARDUINO_FEATHERS3) )
-#warning Using ESP32_S3. To install esp32-s3-support branch if using core v2.0.2-.
-#define USING_ESP32_S3        true
+  #warning Using ESP32_S3. To install esp32-s3-support branch if using core v2.0.2-.
+  #define USING_ESP32_S3        true
 #endif
 
+///////////////////////////////////////////
+
 #ifndef ESP_WIFI_MANAGER_LITE_VERSION
-  #define ESP_WIFI_MANAGER_LITE_VERSION             "ESP_WiFiManager_Lite v1.10.2"
+  #define ESP_WIFI_MANAGER_LITE_VERSION             "ESP_WiFiManager_Lite v1.10.5"
 
   #define ESP_WIFI_MANAGER_LITE_VERSION_MAJOR       1
   #define ESP_WIFI_MANAGER_LITE_VERSION_MINOR       10
-  #define ESP_WIFI_MANAGER_LITE_VERSION_PATCH       2
+  #define ESP_WIFI_MANAGER_LITE_VERSION_PATCH       5
 
-  #define ESP_WIFI_MANAGER_LITE_VERSION_INT         1010002
+  #define ESP_WIFI_MANAGER_LITE_VERSION_INT         1010005
 #endif
+
+///////////////////////////////////////////
 
 #ifdef ESP8266
 
@@ -159,6 +166,8 @@
 #endif
 
 #define DNS_PORT      53
+
+///////////////////////////////////////////
 
 #include <DNSServer.h>
 #include <memory>
@@ -329,10 +338,13 @@ uint32_t getChipOUI();
 
 #endif
 
+///////////////////////////////////////////
 
 //NEW
 #define MAX_ID_LEN                5
 #define MAX_DISPLAY_NAME_LEN      16
+
+///////////////////////////////////////////
 
 typedef struct
 {
@@ -341,7 +353,8 @@ typedef struct
   char *pdata;
   uint8_t maxlen;
 } MenuItem;
-//
+
+///////////////////////////////////////////
 
 #if USE_DYNAMIC_PARAMETERS
   #if (_ESP_WM_LITE_LOGLEVEL_ > 3)
@@ -358,6 +371,7 @@ typedef struct
   #endif
 #endif
 
+///////////////////////////////////////////
 
 #define SSID_MAX_LEN      32
 // WPA2 passwords can be up to 63 characters long.
@@ -379,7 +393,7 @@ typedef struct
   #define NUM_CONFIGURABLE_ITEMS    ( ( 2 * NUM_WIFI_CREDENTIALS ))
 #endif
 
-////////////////
+///////////////////////////////////////////
 
 #define HEADER_MAX_LEN            16
 #define BOARD_NAME_MAX_LEN        24
@@ -395,87 +409,90 @@ typedef struct Configuration
 // Currently CONFIG_DATA_SIZE  =   236  = (16 + 96 * 2 + 4 + 24)
 uint16_t CONFIG_DATA_SIZE = sizeof(ESP_WM_LITE_Configuration);
 
-///New from v1.0.4
+///////////////////////////////////////////
+
 extern bool LOAD_DEFAULT_CONFIG_DATA;
 extern ESP_WM_LITE_Configuration defaultConfig;
 
+///////////////////////////////////////////
+
 // -- HTML page fragments
 
-const char ESP_WM_LITE_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>ESP_WM_LITE</title><meta name='viewport' content='width=device-width, initial-scale=1'>";
+const char ESP_WM_LITE_HTML_HEAD_START[] PROGMEM = "<!DOCTYPE html><html><head><title>ESP_WM_LITE</title><meta name='viewport' content='width=device-width, initial-scale=1'>";
 
-const char ESP_WM_LITE_HTML_HEAD_STYLE[] /*PROGMEM*/ =
+const char ESP_WM_LITE_HTML_HEAD_STYLE[] PROGMEM =
   "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
 
 #if USING_BOARD_NAME
-  const char ESP_WM_LITE_HTML_HEAD_END[]   /*PROGMEM*/ =
+  const char ESP_WM_LITE_HTML_HEAD_END[]   PROGMEM =
   "</head><div style='text-align:left;display:inline-block;min-width:260px;'>\
   <fieldset><div><label>*WiFi SSID</label><div>[[input_id]]</div></div>\
   <div><label>*PWD (8+ chars)</label><input value='[[pw]]' id='pw'><div></div></div>\
   <div><label>*WiFi SSID1</label><div>[[input_id1]]</div></div>\
   <div><label>*PWD1 (8+ chars)</label><input value='[[pw1]]' id='pw1'><div></div></div></fieldset>\
-  <fieldset><div><label>Board Name</label><input value='[[nm]]' id='nm'><div></div></div></fieldset>";	// DO NOT CHANGE THIS STRING EVER!!!!
+  <fieldset><div><label>Board Name</label><input value='[[nm]]' id='nm'><div></div></div></fieldset>";  // DO NOT CHANGE THIS STRING EVER!!!!
 #else
-  const char ESP_WM_LITE_HTML_HEAD_END[]   /*PROGMEM*/ =
+  const char ESP_WM_LITE_HTML_HEAD_END[]   PROGMEM =
   "</head><div style='text-align:left;display:inline-block;min-width:260px;'>\
   <fieldset><div><label>*WiFi SSID</label><div>[[input_id]]</div></div>\
   <div><label>*PWD (8+ chars)</label><input value='[[pw]]' id='pw'><div></div></div>\
   <div><label>*WiFi SSID1</label><div>[[input_id1]]</div></div>\
-  <div><label>*PWD1 (8+ chars)</label><input value='[[pw1]]' id='pw1'><div></div></div></fieldset>";	// DO NOT CHANGE THIS STRING EVER!!!!
+  <div><label>*PWD1 (8+ chars)</label><input value='[[pw1]]' id='pw1'><div></div></div></fieldset>";  // DO NOT CHANGE THIS STRING EVER!!!!
 #endif
 
-const char ESP_WM_LITE_HTML_INPUT_ID[]   /*PROGMEM*/ = "<input value='[[id]]' id='id'>";
-const char ESP_WM_LITE_HTML_INPUT_ID1[]  /*PROGMEM*/ = "<input value='[[id1]]' id='id1'>";
+const char ESP_WM_LITE_HTML_INPUT_ID[]   PROGMEM = "<input value='[[id]]' id='id'>";
+const char ESP_WM_LITE_HTML_INPUT_ID1[]  PROGMEM = "<input value='[[id1]]' id='id1'>";
 
-const char ESP_WM_LITE_FLDSET_START[]  /*PROGMEM*/ = "<fieldset>";
-const char ESP_WM_LITE_FLDSET_END[]    /*PROGMEM*/ = "</fieldset>";
-const char ESP_WM_LITE_HTML_PARAM[]    /*PROGMEM*/ =
+const char ESP_WM_LITE_FLDSET_START[]  PROGMEM = "<fieldset>";
+const char ESP_WM_LITE_FLDSET_END[]    PROGMEM = "</fieldset>";
+const char ESP_WM_LITE_HTML_PARAM[]    PROGMEM =
   "<div><label>{b}</label><input value='[[{v}]]'id='{i}'><div></div></div>";
-const char ESP_WM_LITE_HTML_BUTTON[]   /*PROGMEM*/ = "<button onclick=\"sv()\">Save</button></div>";
+const char ESP_WM_LITE_HTML_BUTTON[]   PROGMEM = "<button onclick=\"sv()\">Save</button></div>";
 
 #if USING_BOARD_NAME
-  const char ESP_WM_LITE_HTML_SCRIPT[]   /*PROGMEM*/ = "<script id=\"jsbin-javascript\">\
+  const char ESP_WM_LITE_HTML_SCRIPT[]   PROGMEM = "<script id=\"jsbin-javascript\">\
   function udVal(key,val){var request=new XMLHttpRequest();var url='/?key='+key+'&value='+encodeURIComponent(val);\
   request.open('GET',url,false);request.send(null);}\
   function sv(){udVal('id',document.getElementById('id').value);udVal('pw',document.getElementById('pw').value);\
   udVal('id1',document.getElementById('id1').value);udVal('pw1',document.getElementById('pw1').value);\
   udVal('nm',document.getElementById('nm').value);";
 #else
-  const char ESP_WM_LITE_HTML_SCRIPT[]   /*PROGMEM*/ = "<script id=\"jsbin-javascript\">\
+  const char ESP_WM_LITE_HTML_SCRIPT[]   PROGMEM = "<script id=\"jsbin-javascript\">\
   function udVal(key,val){var request=new XMLHttpRequest();var url='/?key='+key+'&value='+encodeURIComponent(val);\
   request.open('GET',url,false);request.send(null);}\
   function sv(){udVal('id',document.getElementById('id').value);udVal('pw',document.getElementById('pw').value);\
   udVal('id1',document.getElementById('id1').value);udVal('pw1',document.getElementById('pw1').value);";
 #endif
 
-const char ESP_WM_LITE_HTML_SCRIPT_ITEM[]  /*PROGMEM*/ = "udVal('{d}',document.getElementById('{d}').value);";
-const char ESP_WM_LITE_HTML_SCRIPT_END[]   /*PROGMEM*/ = "alert('Updated');}</script>";
-const char ESP_WM_LITE_HTML_END[]          /*PROGMEM*/ = "</html>";
+const char ESP_WM_LITE_HTML_SCRIPT_ITEM[]  PROGMEM = "udVal('{d}',document.getElementById('{d}').value);";
+const char ESP_WM_LITE_HTML_SCRIPT_END[]   PROGMEM = "alert('Updated');}</script>";
+const char ESP_WM_LITE_HTML_END[]          PROGMEM = "</html>";
 
 #if SCAN_WIFI_NETWORKS
-  const char ESP_WM_LITE_SELECT_START[]      /*PROGMEM*/ = "<select id=";
-  const char ESP_WM_LITE_SELECT_END[]        /*PROGMEM*/ = "</select>";
-  const char ESP_WM_LITE_DATALIST_START[]    /*PROGMEM*/ = "<datalist id=";
-  const char ESP_WM_LITE_DATALIST_END[]      /*PROGMEM*/ = "</datalist>";
-  const char ESP_WM_LITE_OPTION_START[]      /*PROGMEM*/ = "<option>";
-  const char ESP_WM_LITE_OPTION_END[]        /*PROGMEM*/ = "";      // "</option>"; is not required
-  const char ESP_WM_LITE_NO_NETWORKS_FOUND[] /*PROGMEM*/ = "No suitable WiFi networks available!";
+  const char ESP_WM_LITE_SELECT_START[]      PROGMEM = "<select id=";
+  const char ESP_WM_LITE_SELECT_END[]        PROGMEM = "</select>";
+  const char ESP_WM_LITE_DATALIST_START[]    PROGMEM = "<datalist id=";
+  const char ESP_WM_LITE_DATALIST_END[]      PROGMEM = "</datalist>";
+  const char ESP_WM_LITE_OPTION_START[]      PROGMEM = "<option>";
+  const char ESP_WM_LITE_OPTION_END[]        PROGMEM = "";      // "</option>"; is not required
+  const char ESP_WM_LITE_NO_NETWORKS_FOUND[] PROGMEM = "No suitable WiFi networks available!";
 #endif
 
 //////////////////////////////////////////
 
 //KH Add repeatedly used const
-//KH, from v1.2.0
-const char WM_HTTP_HEAD_CL[]         /*PROGMEM*/ = "Content-Length";
-const char WM_HTTP_HEAD_TEXT_HTML[]  /*PROGMEM*/ = "text/html";
-const char WM_HTTP_HEAD_TEXT_PLAIN[] /*PROGMEM*/ = "text/plain";
 
-const char WM_HTTP_CACHE_CONTROL[]   /*PROGMEM*/ = "Cache-Control";
-const char WM_HTTP_NO_STORE[]        /*PROGMEM*/ = "no-cache, no-store, must-revalidate";
-const char WM_HTTP_PRAGMA[]          /*PROGMEM*/ = "Pragma";
-const char WM_HTTP_NO_CACHE[]        /*PROGMEM*/ = "no-cache";
-const char WM_HTTP_EXPIRES[]         /*PROGMEM*/ = "Expires";
-const char WM_HTTP_CORS[]            /*PROGMEM*/ = "Access-Control-Allow-Origin";
-const char WM_HTTP_CORS_ALLOW_ALL[]  /*PROGMEM*/ = "*";
+const char WM_HTTP_HEAD_CL[]         PROGMEM = "Content-Length";
+const char WM_HTTP_HEAD_TEXT_HTML[]  PROGMEM = "text/html";
+const char WM_HTTP_HEAD_TEXT_PLAIN[] PROGMEM = "text/plain";
+
+const char WM_HTTP_CACHE_CONTROL[]   PROGMEM = "Cache-Control";
+const char WM_HTTP_NO_STORE[]        PROGMEM = "no-cache, no-store, must-revalidate";
+const char WM_HTTP_PRAGMA[]          PROGMEM = "Pragma";
+const char WM_HTTP_NO_CACHE[]        PROGMEM = "no-cache";
+const char WM_HTTP_EXPIRES[]         PROGMEM = "Expires";
+const char WM_HTTP_CORS[]            PROGMEM = "Access-Control-Allow-Origin";
+const char WM_HTTP_CORS_ALLOW_ALL[]  PROGMEM = "*";
 
 //////////////////////////////////////////
 
@@ -493,6 +510,8 @@ uint32_t getChipID()
   return (uint32_t) (chipId64 & 0xFFFFFF);
 }
 
+//////////////////////////////////////////
+
 uint32_t getChipOUI()
 {
   uint64_t chipId64 = 0;
@@ -507,6 +526,8 @@ uint32_t getChipOUI()
 
 #endif
 
+//////////////////////////////////////////
+
 String IPAddressToString(const IPAddress& _address)
 {
   String str = String(_address[0]);
@@ -519,6 +540,8 @@ String IPAddressToString(const IPAddress& _address)
   return str;
 }
 
+//////////////////////////////////////////
+
 class ESP_WiFiManager_Lite
 {
   public:
@@ -527,6 +550,8 @@ class ESP_WiFiManager_Lite
     {
 
     }
+
+//////////////////////////////////////////
 
     ~ESP_WiFiManager_Lite()
     {
@@ -549,6 +574,8 @@ class ESP_WiFiManager_Lite
 #endif
       }
     }
+
+//////////////////////////////////////////
 
     void connectWiFi(const char* ssid, const char* pass)
     {
@@ -584,6 +611,8 @@ class ESP_WiFiManager_Lite
       displayWiFiData();
     }
 
+//////////////////////////////////////////
+
     void begin(const char* ssid,
                const char* pass )
     {
@@ -591,40 +620,43 @@ class ESP_WiFiManager_Lite
       connectWiFi(ssid, pass);
     }
 
+//////////////////////////////////////////
+
 #if !defined(USE_LED_BUILTIN)
   #define USE_LED_BUILTIN     true      // use builtin LED to show configuration mode
 #endif
 
 #if ESP8266
 
-    // For ESP8266
-#ifndef LED_BUILTIN
-#define LED_BUILTIN       2         // Pin D2 mapped to pin GPIO2/ADC12 of ESP32, control on-board LED
-#endif
+  // For ESP8266
+  #ifndef LED_BUILTIN
+    #define LED_BUILTIN       2         // Pin D2 mapped to pin GPIO2/ADC12 of ESP32, control on-board LED
+  #endif
 
-#define LED_ON      LOW
-#define LED_OFF     HIGH
+  #define LED_ON      LOW
+  #define LED_OFF     HIGH
 
 #else
 
-    // For ESP32
-#ifndef LED_BUILTIN
-#define LED_BUILTIN       2         // Pin D2 mapped to pin GPIO2/ADC12 of ESP32, control on-board LED
+  // For ESP32
+  #ifndef LED_BUILTIN
+    #define LED_BUILTIN       2         // Pin D2 mapped to pin GPIO2/ADC12 of ESP32, control on-board LED
+  #endif
+
+  #define LED_OFF     LOW
+  #define LED_ON      HIGH
+
 #endif
 
-#define LED_OFF     LOW
-#define LED_ON      HIGH
+///////////////////////////////////////////
 
-#endif
-
-    // New from v1.3.0
 #if !defined(REQUIRE_ONE_SET_SSID_PW)
-#define REQUIRE_ONE_SET_SSID_PW     false
+  #define REQUIRE_ONE_SET_SSID_PW     false
 #endif
 
-#define PASSWORD_MIN_LEN              8
+#define PASSWORD_MIN_LEN        8
 
-#define RETRY_TIMES_CONNECT_WIFI      3
+    //////////////////////////////////////////
 
     void begin(const char *iHostname = "")
     {
@@ -742,6 +774,8 @@ class ESP_WiFiManager_Lite
       }
     }
 
+    //////////////////////////////////////////
+
 #ifndef TIMEOUT_RECONNECT_WIFI
 #define TIMEOUT_RECONNECT_WIFI   10000L
 #else
@@ -791,6 +825,8 @@ class ESP_WiFiManager_Lite
 #endif
 #endif
 
+    //////////////////////////////////////////
+
 #if !defined(WIFI_RECON_INTERVAL)
 #define WIFI_RECON_INTERVAL       0         // default 0s between reconnecting WiFi
 #else
@@ -800,6 +836,8 @@ class ESP_WiFiManager_Lite
 #define WIFI_RECON_INTERVAL     600000    // Max 10min
 #endif
 #endif
+
+    //////////////////////////////////////////
 
     void run()
     {
@@ -954,6 +992,7 @@ class ESP_WiFiManager_Lite
         // WiFi is connected and we are in configuration_mode
         configuration_mode = false;
         ESP_WML_LOGINFO(F("run: got WiFi back"));
+
 #if USE_LED_BUILTIN
         // turn the LED_BUILTIN OFF to tell us we exit configuration mode.
         digitalWrite(LED_BUILTIN, LED_OFF);
@@ -1218,18 +1257,18 @@ class ESP_WiFiManager_Lite
     // input{width:95%;}body{text-align: center;}
     // button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}
     // fieldset{border-radius:0.3rem;margin:0px;}</style>";
-    void setCustomsStyle(const char* CustomsStyle = ESP_WM_LITE_HTML_HEAD_STYLE)
+    void setCustomsStyle(PGM_P CustomsStyle = ESP_WM_LITE_HTML_HEAD_STYLE)
     {
-      ESP_WM_LITE_HTML_HEAD_CUSTOMS_STYLE = CustomsStyle;
-      ESP_WML_LOGDEBUG1(F("Set CustomsStyle to : "), ESP_WM_LITE_HTML_HEAD_CUSTOMS_STYLE);
+      _CustomsHeadStyle = CustomsStyle;
+      ESP_WML_LOGDEBUG1(F("Set CustomsStyle to : "), FPSTR(_CustomsHeadStyle));
     }
 
     //////////////////////////////////////
 
-    const char* getCustomsStyle()
+    PGM_P getCustomsStyle()
     {
-      ESP_WML_LOGDEBUG1(F("Get CustomsStyle = "), ESP_WM_LITE_HTML_HEAD_CUSTOMS_STYLE);
-      return ESP_WM_LITE_HTML_HEAD_CUSTOMS_STYLE;
+      ESP_WML_LOGDEBUG1(F("Get CustomsStyle = "), FPSTR(_CustomsHeadStyle));
+      return _CustomsHeadStyle;
     }
 #endif
 
@@ -1237,7 +1276,7 @@ class ESP_WiFiManager_Lite
 
 #if USING_CUSTOMS_HEAD_ELEMENT
     //sets a custom element to add to head, like a new style tag
-    void setCustomsHeadElement(const char* CustomsHeadElement = NULL)
+    void setCustomsHeadElement(PGM_P CustomsHeadElement = NULL)
     {
       _CustomsHeadElement = CustomsHeadElement;
       ESP_WML_LOGDEBUG1(F("Set CustomsHeadElement to : "), _CustomsHeadElement);
@@ -1245,7 +1284,7 @@ class ESP_WiFiManager_Lite
 
     //////////////////////////////////////
 
-    const char* getCustomsHeadElement()
+    PGM_P getCustomsHeadElement()
     {
       ESP_WML_LOGDEBUG1(F("Get CustomsHeadElement = "), _CustomsHeadElement);
       return _CustomsHeadElement;
@@ -1255,16 +1294,15 @@ class ESP_WiFiManager_Lite
     //////////////////////////////////////
 
 #if USING_CORS_FEATURE
-    void setCORSHeader(const char* CORSHeaders = NULL)
+    void setCORSHeader(PGM_P CORSHeaders = NULL)
     {
       _CORS_Header = CORSHeaders;
-
       ESP_WML_LOGDEBUG1(F("Set CORS Header to : "), _CORS_Header);
     }
 
     //////////////////////////////////////
 
-    const char* getCORSHeader()
+    PGM_P getCORSHeader()
     {
       ESP_WML_LOGDEBUG1(F("Get CORS Header = "), _CORS_Header);
       return _CORS_Header;
@@ -1277,6 +1315,8 @@ class ESP_WiFiManager_Lite
 
     bool extLoadDynamicData()
     {
+#if ( USE_LITTLEFS || USE_SPIFFS )
+
   #if ESP8266
       // SPIFFS and LittleFS do auto-format if not yet
       if (!FileFS.begin())
@@ -1290,12 +1330,20 @@ class ESP_WiFiManager_Lite
       }
 
       return loadDynamicData();
+
+#else   // #if ( USE_LITTLEFS || USE_SPIFFS )
+
+      return EEPROM_getDynamicData();
+
+#endif   // #if ( USE_LITTLEFS || USE_SPIFFS )
     }
 
     //////////////////////////////////////////////
 
     void extSaveDynamicData()
     {
+#if ( USE_LITTLEFS || USE_SPIFFS )
+
   #if ESP8266
       // SPIFFS and LittleFS do auto-format if not yet
       if (!FileFS.begin())
@@ -1309,16 +1357,22 @@ class ESP_WiFiManager_Lite
       }
 
       saveDynamicData();
+
+#else   // #if ( USE_LITTLEFS || USE_SPIFFS )
+
+      EEPROM_putDynamicData();
+
+#endif   // #if ( USE_LITTLEFS || USE_SPIFFS )
     }
 
 #endif
 
     //////////////////////////////////////
 
+
   private:
     String ipAddress = "0.0.0.0";
 
-    //KH, for ESP32
 #ifdef ESP8266
     ESP8266WebServer *server = nullptr;
     ESP8266WiFiMulti wifiMulti;
@@ -1362,15 +1416,15 @@ class ESP_WiFiManager_Lite
     // Add customs headers from v1.2.0
 
 #if USING_CUSTOMS_STYLE
-    const char* ESP_WM_LITE_HTML_HEAD_CUSTOMS_STYLE = NULL;
+    PGM_P _CustomsHeadStyle = nullptr;
 #endif
 
 #if USING_CUSTOMS_HEAD_ELEMENT
-    const char* _CustomsHeadElement = NULL;
+    PGM_P _CustomsHeadElement = nullptr;
 #endif
 
 #if USING_CORS_FEATURE
-    const char* _CORS_Header        = WM_HTTP_CORS_ALLOW_ALL;   // "*";
+    PGM_P _CORS_Header = WM_HTTP_CORS_ALLOW_ALL;   // "*";
 #endif
 
     //////////////////////////////////////
@@ -1674,45 +1728,42 @@ class ESP_WiFiManager_Lite
         {
           ESP_WML_LOGDEBUG1(F("ChkCrR: Buffer allocated, sz="), maxBufferLength + 1);
         }
-      }
 
-      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
-      {
-        char* _pointer = readBuffer;
-
-        // Actual size of pdata is [maxlen + 1]
-        memset(readBuffer, 0, myMenuItems[i].maxlen + 1);
-
-        file.readBytes(_pointer, myMenuItems[i].maxlen);
-
-        ESP_WML_LOGDEBUG3(F("ChkCrR:pdata="), readBuffer, F(",len="), myMenuItems[i].maxlen);
-
-        for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++, _pointer++)
+        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
         {
-          checkSum += *_pointer;
+          char* _pointer = readBuffer;
+  
+          // Actual size of pdata is [maxlen + 1]
+          memset(readBuffer, 0, myMenuItems[i].maxlen + 1);
+  
+          file.readBytes(_pointer, myMenuItems[i].maxlen);
+  
+          ESP_WML_LOGDEBUG3(F("ChkCrR:pdata="), readBuffer, F(",len="), myMenuItems[i].maxlen);
+  
+          for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++, _pointer++)
+          {
+            checkSum += *_pointer;
+          }
+        }
+  
+        file.readBytes((char *) &readCheckSum, sizeof(readCheckSum));
+  
+        ESP_WML_LOGINFO(F("OK"));
+        file.close();
+  
+        ESP_WML_LOGINFO3(F("CrCCsum=0x"), String(checkSum, HEX), F(",CrRCsum=0x"), String(readCheckSum, HEX));
+  
+        // Free buffer
+        delete [] readBuffer;
+        ESP_WML_LOGDEBUG(F("Buffer freed"));
+  
+        if ( checkSum == readCheckSum)
+        {
+          return true;
         }
       }
 
-      file.readBytes((char *) &readCheckSum, sizeof(readCheckSum));
-
-      ESP_WML_LOGINFO(F("OK"));
-      file.close();
-
-      ESP_WML_LOGINFO3(F("CrCCsum=0x"), String(checkSum, HEX), F(",CrRCsum=0x"), String(readCheckSum, HEX));
-
-      // Free buffer
-      if (readBuffer != NULL)
-      {
-        delete [] readBuffer;
-        ESP_WML_LOGDEBUG(F("Buffer freed"));
-      }
-
-      if ( checkSum != readCheckSum)
-      {
-        return false;
-      }
-
-      return true;
+      return false;
     }
 
     //////////////////////////////////////////////
@@ -2133,7 +2184,7 @@ class ESP_WiFiManager_Lite
 
     //////////////////////////////////////////////
 
-#else
+#else   // #if ( USE_LITTLEFS || USE_SPIFFS )
 
 #ifndef EEPROM_SIZE
 #define EEPROM_SIZE     2048
@@ -2166,7 +2217,6 @@ class ESP_WiFiManager_Lite
     // Stating positon to store ESP_WM_LITE_config
 #define CONFIG_EEPROM_START    (EEPROM_START + FLAG_DATA_SIZE)
 
-
     //////////////////////////////////////////////
 
     void setForcedCP(const bool& isPersistent)
@@ -2179,6 +2229,7 @@ class ESP_WiFiManager_Lite
       EEPROM.put(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, readForcedConfigPortalFlag);
       EEPROM.commit();
     }
+
     //////////////////////////////////////////////
 
     void clearForcedCP()
@@ -2521,7 +2572,7 @@ class ESP_WiFiManager_Lite
       return true;
     }
 
-#endif
+#endif    // #if ( USE_LITTLEFS || USE_SPIFFS )
 
     //////////////////////////////////////////////
 
@@ -2613,18 +2664,18 @@ class ESP_WiFiManager_Lite
     {
       String pitem;
 
-      root_html_template  = ESP_WM_LITE_HTML_HEAD_START;
+      root_html_template = FPSTR(ESP_WM_LITE_HTML_HEAD_START);
 
 #if USING_CUSTOMS_STYLE
 
       // Using Customs style when not NULL
-      if (ESP_WM_LITE_HTML_HEAD_CUSTOMS_STYLE)
-        root_html_template  += ESP_WM_LITE_HTML_HEAD_CUSTOMS_STYLE;
+      if (_CustomsHeadStyle)
+        root_html_template += FPSTR(_CustomsHeadStyle);
       else
-        root_html_template  += ESP_WM_LITE_HTML_HEAD_STYLE;
+        root_html_template += FPSTR(ESP_WM_LITE_HTML_HEAD_STYLE);
 
 #else
-      root_html_template  += ESP_WM_LITE_HTML_HEAD_STYLE;
+      root_html_template += FPSTR(ESP_WM_LITE_HTML_HEAD_STYLE);
 #endif
 
 #if USING_CUSTOMS_HEAD_ELEMENT
@@ -2646,37 +2697,37 @@ class ESP_WiFiManager_Lite
         if (indices[i] == -1)
           continue;     // skip duplicates and those that are below the required quality
 
-        ListOfSSIDs += ESP_WM_LITE_OPTION_START + String(WiFi.SSID(indices[i])) + ESP_WM_LITE_OPTION_END;
+        ListOfSSIDs += String(FPSTR(ESP_WM_LITE_OPTION_START)) + String(WiFi.SSID(indices[i])) + String(FPSTR(ESP_WM_LITE_OPTION_END));
         list_items++;   // Count number of suitable, distinct SSIDs to be included in list
       }
 
       ESP_WML_LOGDEBUG(ListOfSSIDs);
 
       if (ListOfSSIDs == "")    // No SSID found or none was good enough
-        ListOfSSIDs = ESP_WM_LITE_OPTION_START + String(ESP_WM_LITE_NO_NETWORKS_FOUND) + ESP_WM_LITE_OPTION_END;
+        ListOfSSIDs = String(FPSTR(ESP_WM_LITE_OPTION_START)) + String(FPSTR(ESP_WM_LITE_NO_NETWORKS_FOUND)) + String(FPSTR(ESP_WM_LITE_OPTION_END));
 
-      pitem = String(ESP_WM_LITE_HTML_HEAD_END);
+      pitem = String(FPSTR(ESP_WM_LITE_HTML_HEAD_END));
 
 #if MANUAL_SSID_INPUT_ALLOWED
-      pitem.replace("[[input_id]]",  "<input id='id' list='SSIDs'>"  + String(ESP_WM_LITE_DATALIST_START) + "'SSIDs'>" +
-                    ListOfSSIDs + ESP_WM_LITE_DATALIST_END);
+      pitem.replace("[[input_id]]",  "<input id='id' list='SSIDs'>"  + String(FPSTR(ESP_WM_LITE_DATALIST_START)) + "'SSIDs'>" +
+                    ListOfSSIDs + FPSTR(ESP_WM_LITE_DATALIST_END));
       ESP_WML_LOGDEBUG1(F("pitem:"), pitem);
-      pitem.replace("[[input_id1]]", "<input id='id1' list='SSIDs'>" + String(ESP_WM_LITE_DATALIST_START) + "'SSIDs'>" +
-                    ListOfSSIDs + ESP_WM_LITE_DATALIST_END);
+      pitem.replace("[[input_id1]]", "<input id='id1' list='SSIDs'>" + String(FPSTR(ESP_WM_LITE_DATALIST_START)) + "'SSIDs'>" +
+                    ListOfSSIDs + FPSTR(ESP_WM_LITE_DATALIST_END));
       ESP_WML_LOGDEBUG1(F("pitem:"), pitem);
 #else
-      pitem.replace("[[input_id]]",  "<select id='id'>"  + ListOfSSIDs + ESP_WM_LITE_SELECT_END);
-      pitem.replace("[[input_id1]]", "<select id='id1'>" + ListOfSSIDs + ESP_WM_LITE_SELECT_END);
+      pitem.replace("[[input_id]]",  "<select id='id'>"  + ListOfSSIDs + FPSTR(ESP_WM_LITE_SELECT_END));
+      pitem.replace("[[input_id1]]", "<select id='id1'>" + ListOfSSIDs + FPSTR(ESP_WM_LITE_SELECT_END));
 #endif
 
-      root_html_template += pitem + ESP_WM_LITE_FLDSET_START;
+      root_html_template += pitem + FPSTR(ESP_WM_LITE_FLDSET_START);
 
 #else
 
-      pitem = String(ESP_WM_LITE_HTML_HEAD_END);
-      pitem.replace("[[input_id]]",  ESP_WM_LITE_HTML_INPUT_ID);
-      pitem.replace("[[input_id1]]", ESP_WM_LITE_HTML_INPUT_ID1);
-      root_html_template += pitem + ESP_WM_LITE_FLDSET_START;
+      pitem = String(FPSTR(ESP_WM_LITE_HTML_HEAD_END));
+      pitem.replace("[[input_id]]",  FPSTR(ESP_WM_LITE_HTML_INPUT_ID));
+      pitem.replace("[[input_id1]]", FPSTR(ESP_WM_LITE_HTML_INPUT_ID1));
+      root_html_template += pitem + FPSTR(ESP_WM_LITE_FLDSET_START);
 
 #endif    // SCAN_WIFI_NETWORKS
 
@@ -2684,7 +2735,7 @@ class ESP_WiFiManager_Lite
 
       for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {
-        pitem = String(ESP_WM_LITE_HTML_PARAM);
+        pitem = String(FPSTR(ESP_WM_LITE_HTML_PARAM));
 
         pitem.replace("{b}", myMenuItems[i].displayName);
         pitem.replace("{v}", myMenuItems[i].id);
@@ -2695,13 +2746,13 @@ class ESP_WiFiManager_Lite
 
 #endif
 
-      root_html_template += String(ESP_WM_LITE_FLDSET_END) + ESP_WM_LITE_HTML_BUTTON + ESP_WM_LITE_HTML_SCRIPT;
+      root_html_template += String(FPSTR(ESP_WM_LITE_FLDSET_END)) + FPSTR(ESP_WM_LITE_HTML_BUTTON) + FPSTR(ESP_WM_LITE_HTML_SCRIPT);
 
 #if USE_DYNAMIC_PARAMETERS
 
       for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {
-        pitem = String(ESP_WM_LITE_HTML_SCRIPT_ITEM);
+        pitem = String(FPSTR(ESP_WM_LITE_HTML_SCRIPT_ITEM));
 
         pitem.replace("{d}", myMenuItems[i].id);
 
@@ -2710,7 +2761,7 @@ class ESP_WiFiManager_Lite
 
 #endif
 
-      root_html_template += String(ESP_WM_LITE_HTML_SCRIPT_END) + ESP_WM_LITE_HTML_END;
+      root_html_template += String(FPSTR(ESP_WM_LITE_HTML_SCRIPT_END)) + FPSTR(ESP_WM_LITE_HTML_END);
 
       return;
     }
@@ -2719,20 +2770,20 @@ class ESP_WiFiManager_Lite
 
     void serverSendHeaders()
     {
-      ESP_WML_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_CACHE_CONTROL:"), WM_HTTP_CACHE_CONTROL, " : ", WM_HTTP_NO_STORE);
-      server->sendHeader(WM_HTTP_CACHE_CONTROL, WM_HTTP_NO_STORE);
+      ESP_WML_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_CACHE_CONTROL:"), FPSTR(WM_HTTP_CACHE_CONTROL), " : ", FPSTR(WM_HTTP_NO_STORE));
+      server->sendHeader(FPSTR(WM_HTTP_CACHE_CONTROL), FPSTR(WM_HTTP_NO_STORE));
 
 #if USING_CORS_FEATURE
       // New from v1.2.0, for configure CORS Header, default to WM_HTTP_CORS_ALLOW_ALL = "*"
-      ESP_WML_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_CORS:"), WM_HTTP_CORS, " : ", _CORS_Header);
-      server->sendHeader(WM_HTTP_CORS, _CORS_Header);
+      ESP_WML_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_CORS:"), FPSTR(WM_HTTP_CORS), " : ", FPSTR(_CORS_Header));
+      server->sendHeader(FPSTR(WM_HTTP_CORS), FPSTR(_CORS_Header));
 #endif
 
-      ESP_WML_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_PRAGMA:"), WM_HTTP_PRAGMA, " : ", WM_HTTP_NO_CACHE);
-      server->sendHeader(WM_HTTP_PRAGMA, WM_HTTP_NO_CACHE);
+      ESP_WML_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_PRAGMA:"), FPSTR(WM_HTTP_PRAGMA), " : ", FPSTR(WM_HTTP_NO_CACHE));
+      server->sendHeader(FPSTR(WM_HTTP_PRAGMA), FPSTR(WM_HTTP_NO_CACHE));
 
-      ESP_WML_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_EXPIRES:"), WM_HTTP_EXPIRES, " : ", "-1");
-      server->sendHeader(WM_HTTP_EXPIRES, "-1");
+      ESP_WML_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_EXPIRES:"), FPSTR(WM_HTTP_EXPIRES), " : ", "-1");
+      server->sendHeader(FPSTR(WM_HTTP_EXPIRES), "-1");
     }
 
     //////////////////////////////////////////////
@@ -2763,12 +2814,12 @@ class ESP_WiFiManager_Lite
           if ( RFC952_hostname[0] != 0 )
           {
             // Replace only if Hostname is valid
-            result.replace("ESP_WM_Lite", RFC952_hostname);
+            result.replace("ESP_WM_LITE", RFC952_hostname);
           }
           else if ( ESP_WM_LITE_config.board_name[0] != 0 )
           {
             // Or replace only if board_name is valid.  Otherwise, keep intact
-            result.replace("ESP_WM_Lite", ESP_WM_LITE_config.board_name);
+            result.replace("ESP_WM_LITE", ESP_WM_LITE_config.board_name);
           }
 
           if (hadConfigData)
@@ -2807,7 +2858,7 @@ class ESP_WiFiManager_Lite
           ESP_WML_LOGDEBUG1(F("h:HTML page size:"), result.length());
           ESP_WML_LOGDEBUG1(F("h:HTML="), result);
 
-          server->send(200, WM_HTTP_HEAD_TEXT_HTML, result);
+          server->send(200, FPSTR(WM_HTTP_HEAD_TEXT_HTML), result);
 
           return;
         }
@@ -2950,7 +3001,7 @@ class ESP_WiFiManager_Lite
         ESP_WML_LOGDEBUG1(F("h:items updated ="), number_items_Updated);
         ESP_WML_LOGDEBUG3(F("h:key ="), key, ", value =", value);
 
-        server->send(200, WM_HTTP_HEAD_TEXT_HTML, "OK");
+        server->send(200, FPSTR(WM_HTTP_HEAD_TEXT_HTML), "OK");
 
 #if USE_DYNAMIC_PARAMETERS
 
@@ -2960,11 +3011,11 @@ class ESP_WiFiManager_Lite
 #endif
         {
 #if USE_LITTLEFS
-          ESP_WML_LOGERROR(F("h:UpdLittleFS"));
+          ESP_WML_LOGERROR1(F("h:Updating LittleFS:"), CONFIG_FILENAME);
 #elif USE_SPIFFS
-          ESP_WML_LOGERROR(F("h:UpdSPIFFS"));
+          ESP_WML_LOGERROR1(F("h:Updating SPIFFS:"), CONFIG_FILENAME);
 #else
-          ESP_WML_LOGERROR(F("h:UpdEEPROM"));
+          ESP_WML_LOGERROR(F("h:Updating EEPROM. Please wait for reset"));
 #endif
 
           saveAllConfigData();
@@ -3019,7 +3070,7 @@ class ESP_WiFiManager_Lite
 
       static int channel;
 
-      // Use random channel if  WiFiAPChannel == 0
+      // Use random channel if WiFiAPChannel == 0
       if (WiFiAPChannel == 0)
       {
         //channel = random(MAX_WIFI_CHANNEL) + 1;
@@ -3065,6 +3116,7 @@ class ESP_WiFiManager_Lite
         {
           handleRequest();
         });
+
         server->begin();
       }
 

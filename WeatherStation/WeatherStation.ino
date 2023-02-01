@@ -91,7 +91,7 @@ char secondFormat[80];
 char timeFormat[80];
 
 // Open Weather API
-const String key = "27634cd6d75ba60a8d4850be223a9c43"; // Enter your API key from openweathermap.org
+const String key = "83723267bd3c2f8aa9eb7d200cebd997"; // Enter your API key from openweathermap.org
 const String town = "Brunssum";
 const String country = "NL";
 const String endpoint = "http://api.openweathermap.org/data/2.5/weather?q="+town+","+country+"&units=metric&APPID=";
@@ -128,7 +128,7 @@ void setup(void) {
   tft.setTextSize(1);
 
   ledcSetup(pwmLedChannelTFT, pwmFreq, pwmResolution);
-  ledcAttachPin(TFT_BL, pwmLedChannelTFT);
+  ledcAttachPin(TFT_BLUE, pwmLedChannelTFT);
   ledcWrite(pwmLedChannelTFT, backlight[b]);
   
   /* This is the old part of the code
@@ -161,11 +161,13 @@ void setup(void) {
   Serial.print(F(" on ")); Serial.println(ARDUINO_BOARD);
   Serial.println(ESP_WIFI_MANAGER_LITE_VERSION);
 
+/* This part gives compiling errors so I've removed it from compile to see if it works without it.
   #if USING_MRD  
     Serial.println(ESP_MULTI_RESET_DETECTOR_VERSION);
   #else
     Serial.println(ESP_DOUBLE_RESET_DETECTOR_VERSION);
   #endif
+*/
 
   ESP_WiFiManager = new ESP_WiFiManager_Lite();
 
@@ -179,6 +181,12 @@ void setup(void) {
   //ESP_WiFiManager->setConfigPortalIP(IPAddress(192, 168, 120, 1));
   ESP_WiFiManager->setConfigPortalChannel(0);
 
+/* These classes are not used by the Arduino library ESP_WiFiManager_Lite
+   When I let this part of the code in the sketch I'm getting compiling errors
+   and my quick fix is to comment it out since this isn't necessary for the
+   rest of the program to work and I have no idea at this point what these
+   classes are for and what they are doing.
+
   #if USING_CUSTOMS_STYLE
     ESP_WiFiManager->setCustomsStyle(NewCustomsStyle);
   #endif
@@ -190,6 +198,7 @@ void setup(void) {
   #if USING_CORS_FEATURE  
     ESP_WiFiManager->setCORSHeader("Your Access-Control-Allow-Origin");
   #endif
+*/
 
   // Set customized DHCP HostName
   ESP_WiFiManager->begin(HOST_NAME);

@@ -16,6 +16,8 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Release v1.10.5](#release-v1105)
+  * [Release v1.10.3](#release-v1103)
   * [Release v1.10.2](#release-v1102)
   * [Release v1.10.1](#release-v1101)
   * [Release v1.9.1](#release-v191)
@@ -39,10 +41,22 @@
 
 ## Changelog
 
+### Release v1.10.5
+
+1. Using PROGMEM for strings in examples. Check [Example fixes #32](https://github.com/khoih-prog/ESPAsync_WiFiManager_Lite/pull/32)
+2. Using PROGMEM for HTML strings. Check [implement PROGMEM strings, alignment with ESP_WiFiManager_Lite #31](https://github.com/khoih-prog/ESPAsync_WiFiManager_Lite/pull/31)
+3. Default LittleFS for ESP8266 in examples
+4. Improve `README.md` so that links can be used in other sites, such as `PIO`
+5. Sync with `ESP_WiFiManager_Lite` v1.10.5
+
+### Release v1.10.3
+
+1. Fix compiler error if EEPROM is used. Check [fix compiler error if EEPROM is used #29](https://github.com/khoih-prog/ESPAsync_WiFiManager_Lite/pull/29)
+2. Fix compiler error in PIO. Check [Unable to compile basic example for NodeMCU-32s #28](https://github.com/khoih-prog/ESPAsync_WiFiManager_Lite/issues/28)
+
 ### Release v1.10.2
 
 1. Add Config Portal scaling support to mobile devices. Check [Mobile scale #26](https://github.com/khoih-prog/ESPAsync_WiFiManager_Lite/pull/26)
-
 
 ### Release v1.10.1
 

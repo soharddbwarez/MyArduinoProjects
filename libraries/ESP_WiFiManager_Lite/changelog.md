@@ -15,6 +15,9 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Release v1.10.5](#release-v1105)
+  * [Release v1.10.4](#release-v1104)
+  * [Release v1.10.3](#release-v1103)
   * [Release v1.10.2](#release-v1102)
   * [Release v1.10.1](#release-v1101)
   * [Release v1.10.0](#release-v1100)
@@ -36,6 +39,19 @@
 ---
 
 ## Changelog
+
+### Release v1.10.5
+
+1. Using PROGMEM for strings in examples. Check [Example fixes #37](https://github.com/khoih-prog/ESP_WiFiManager_Lite/pull/37)
+2. Improve `README.md` so that links can be used in other sites, such as `PIO`
+
+### Release v1.10.4
+
+1. Using PROGMEM for HTML strings. Check [move HTML char* into PROGMEM #35](https://github.com/khoih-prog/ESP_WiFiManager_Lite/pull/35)
+
+### Release v1.10.3
+
+1. Fix compiler error if EEPROM is used. Check [fix compiler error if EEPROM is used #33](https://github.com/khoih-prog/ESP_WiFiManager_Lite/pull/33)
 
 ### Release v1.10.2
 

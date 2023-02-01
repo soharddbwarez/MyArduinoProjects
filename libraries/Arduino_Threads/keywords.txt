@@ -1,0 +1,48 @@
+#######################################
+# Syntax Coloring Map for Arduino_Threads
+#######################################
+
+#######################################
+# Class (KEYWORD1)
+#######################################
+
+SINK	KEYWORD1
+SOURCE	KEYWORD1
+SHARED	KEYWORD1
+
+IoRequest	KEYWORD1
+IoResponse	KEYWORD1
+SpiBusDevice	KEYWORD1
+SpiBusDeviceConfig	KEYWORD1
+WireBusDevice	KEYWORD1
+WireBusDeviceConfig	KEYWORD1
+BusDevice	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+start	KEYWORD2
+terminate	KEYWORD2
+broadcastEvent	KEYWORD2
+sendEvent	KEYWORD2
+setLoopDelay	KEYWORD2
+
+transfer	KEYWORD2
+create	KEYWORD2
+block	KEYWORD2
+unblock	KEYWORD2
+prefix	KEYWORD2
+suffix	KEYWORD2
+globalPrefix	KEYWORD2
+globalSuffix	KEYWORD2
+spi	KEYWORD2
+wire	KEYWORD2
+read	KEYWORD2
+write	KEYWORD2
+writeThenRead	KEYWORD2
+transferAndWait	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################

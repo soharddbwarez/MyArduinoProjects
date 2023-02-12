@@ -79,6 +79,13 @@ void            BlynkFatal() BLYNK_NORETURN;
     #define BLYNK_PSTR(s) s
 #endif
 
+#if defined(__has_include)
+    #if __has_include(<functional>)
+        #include <functional>
+        #define BLYNK_HAS_FUNCTIONAL_H
+    #endif
+#endif
+
 #ifdef ARDUINO_AVR_DIGISPARK
     typedef fstr_t __FlashStringHelper;
 #endif
@@ -129,7 +136,7 @@ void            BlynkFatal() BLYNK_NORETURN;
                                             BLYNK_PRINT.print(ip[1]); BLYNK_PRINT.print('.');  \
                                             BLYNK_PRINT.println(ip[0]); }
 
-        static
+        static inline
         void BLYNK_LOG_TIME() {
             BLYNK_PRINT.print('[');
             BLYNK_PRINT.print(BlynkMillis());
@@ -141,7 +148,7 @@ void            BlynkFatal() BLYNK_NORETURN;
         #define BLYNK_DBG_BREAK()    { for(;;); }
         #define BLYNK_ASSERT(expr)   { if(!(expr)) { BLYNK_LOG2(BLYNK_F("Assertion failed: "), BLYNK_F(#expr)); BLYNK_DBG_BREAK() } }
 
-        static
+        static inline
         void BLYNK_DBG_DUMP(const char* msg, const void* addr, size_t len) {
             if (len) {
                 BLYNK_LOG_TIME();
@@ -151,7 +158,7 @@ void            BlynkFatal() BLYNK_NORETURN;
                 bool prev_print = true;
                 while (l2--) {
                     const uint8_t c = *octets++ & 0xFF;
-                    if (c >= 32 && c < 127) {
+                    if (c > 32 && c < 127) {
                         if (!prev_print) { BLYNK_PRINT.print(']'); }
                         BLYNK_PRINT.print((char)c);
                         prev_print = true;
@@ -174,7 +181,7 @@ void            BlynkFatal() BLYNK_NORETURN;
         #include <stdio.h>
         #include <stdarg.h>
 
-        BLYNK_UNUSED
+        static inline
         void blynk_dbg_print(const char* BLYNK_PROGMEM fmt, ...)
         {
             va_list ap;
@@ -208,7 +215,7 @@ void            BlynkFatal() BLYNK_NORETURN;
         #define BLYNK_DBG_BREAK()    raise(SIGTRAP);
         #define BLYNK_ASSERT(expr)   assert(expr)
 
-        static
+        static inline
         void BLYNK_DBG_DUMP(const char* msg, const void* addr, size_t len) {
             BLYNK_LOG_TIME();
             BLYNK_PRINT.printf(msg);
@@ -217,7 +224,7 @@ void            BlynkFatal() BLYNK_NORETURN;
             bool prev_print = true;
             while (l2--) {
                 const uint8_t c = *octets++ & 0xFF;
-                if (c >= 32 && c < 127) {
+                if (c > 32 && c < 127) {
                     if (!prev_print) { BLYNK_PRINT.putc(']'); }
                     BLYNK_PRINT.putc((char)c);
                     prev_print = true;
@@ -254,7 +261,7 @@ void            BlynkFatal() BLYNK_NORETURN;
         #define BLYNK_DBG_BREAK()    raise(SIGTRAP);
         #define BLYNK_ASSERT(expr)   assert(expr)
 
-        static
+        static inline
         void BLYNK_DBG_DUMP(const char* msg, const void* addr, size_t len) {
             BLYNK_LOG_TIME();
             fprintf(BLYNK_PRINT, "%s", msg);
@@ -263,7 +270,7 @@ void            BlynkFatal() BLYNK_NORETURN;
             bool prev_print = true;
             while (l2--) {
                 const uint8_t c = *octets++ & 0xFF;
-                if (c >= 32 && c < 127) {
+                if (c > 32 && c < 127) {
                     if (!prev_print) { fputc(']', BLYNK_PRINT); }
                     fputc((char)c, BLYNK_PRINT);
                     prev_print = true;

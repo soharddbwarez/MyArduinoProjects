@@ -20,25 +20,28 @@ HalStm32EepromAbstraction glBspRom;
 StChromaArtDrawable Drawable;
 GraphicsDeviceRenderer renderer(30, applicationInfo.name, &Drawable);
 StBspTouchInterrogator touchInterrogator(240, 320);
-MenuTouchScreenManager touchScreen(&touchInterrogator, &renderer, iotouch::TouchInterrogator::PORTRAIT);
+iotouch::TouchOrientationSettings touchOrientation(false, false, false);
+MenuTouchScreenManager touchScreen(&touchInterrogator, &renderer, touchOrientation);
+tcextras::IoaTouchScreenCalibrator touchCalibrator(&touchScreen, &renderer, 400);
 
 // Global Menu Item declarations
 const AnalogMenuInfo minfoUnicodeLevel = { "Рівень", 21, 0xffff, 1000, NO_CALLBACK, 0, 10, "П" };
-AnalogMenuItem menuUnicodeLevel(&minfoUnicodeLevel, 0, NULL);
+AnalogMenuItem menuUnicodeLevel(&minfoUnicodeLevel, 0, NULL, INFO_LOCATION_PGM);
 const char enumStrUnicodeChoice_0[] = "Салат";
 const char enumStrUnicodeChoice_1[] = "піца";
 const char enumStrUnicodeChoice_2[] = "борщ";
 const char* const enumStrUnicodeChoice[]  = { enumStrUnicodeChoice_0, enumStrUnicodeChoice_1, enumStrUnicodeChoice_2 };
 const EnumMenuInfo minfoUnicodeChoice = { "Вибір", 20, 0xffff, 2, NO_CALLBACK, enumStrUnicodeChoice };
-EnumMenuItem menuUnicodeChoice(&minfoUnicodeChoice, 0, &menuUnicodeLevel);
-RENDERING_CALLBACK_NAME_INVOKE(fnUnicodeRtCall, backSubItemRenderFn, "Unicode", -1, NO_CALLBACK)
+EnumMenuItem menuUnicodeChoice(&minfoUnicodeChoice, 0, &menuUnicodeLevel, INFO_LOCATION_PGM);
 const SubMenuInfo minfoUnicode = { "Unicode", 19, 0xffff, 0, NO_CALLBACK };
-BackMenuItem menuBackUnicode(fnUnicodeRtCall, &menuUnicodeChoice);
-SubMenuItem menuUnicode(&minfoUnicode, &menuBackUnicode, NULL);
+BackMenuItem menuBackUnicode(&minfoUnicode, &menuUnicodeChoice, INFO_LOCATION_PGM);
+SubMenuItem menuUnicode(&minfoUnicode, &menuBackUnicode, NULL, INFO_LOCATION_PGM);
 const AnyMenuInfo minfoDialogs = { "Dialogs", 18, 0xffff, 0, onPresentDialog };
-ActionMenuItem menuDialogs(&minfoDialogs, &menuUnicode);
+ActionMenuItem menuDialogs(&minfoDialogs, &menuUnicode, INFO_LOCATION_PGM);
+const BooleanMenuInfo minfoSamplesBoolCheck = { "Bool Check", 22, 0xffff, 1, NO_CALLBACK, NAMING_CHECKBOX };
+BooleanMenuItem menuSamplesBoolCheck(&minfoSamplesBoolCheck, false, NULL, INFO_LOCATION_PGM);
 RENDERING_CALLBACK_NAME_INVOKE(fnSamplesLgePosRtCall, largeNumItemRenderFn, "LgePos", -1, NO_CALLBACK)
-EditableLargeNumberMenuItem menuSamplesLgePos(fnSamplesLgePosRtCall, LargeFixedNumber(7, 0, 12456U, 0U, false), 17, false, NULL);
+EditableLargeNumberMenuItem menuSamplesLgePos(fnSamplesLgePosRtCall, LargeFixedNumber(7, 0, 12456U, 0U, false), 17, false, &menuSamplesBoolCheck);
 RENDERING_CALLBACK_NAME_INVOKE(fnSamplesRGBRtCall, rgbAlphaItemRenderFn, "RGB", -1, NO_CALLBACK)
 Rgb32MenuItem menuSamplesRGB(fnSamplesRGBRtCall, RgbColor32(255, 170, 187), 16, false, &menuSamplesLgePos);
 RENDERING_CALLBACK_NAME_INVOKE(fnSamplesTimeRtCall, timeItemRenderFn, "Time", -1, NO_CALLBACK)
@@ -46,45 +49,47 @@ TimeFormattedMenuItem menuSamplesTime(fnSamplesTimeRtCall, TimeStorage(0, 0, 0, 
 RENDERING_CALLBACK_NAME_INVOKE(fnSamplesTextRtCall, textItemRenderFn, "Text", -1, NO_CALLBACK)
 TextMenuItem menuSamplesText(fnSamplesTextRtCall, "", 14, 10, &menuSamplesTime);
 const AnalogMenuInfo minfoBeltSpeed = { "Belt Speed", 13, 0xffff, 200, NO_CALLBACK, 0, 100, "mS" };
-AnalogMenuItem menuBeltSpeed(&minfoBeltSpeed, 200, &menuSamplesText);
+AnalogMenuItem menuBeltSpeed(&minfoBeltSpeed, 200, &menuSamplesText, INFO_LOCATION_PGM);
 const char enumStrBeltStatus_0[] = "Running";
 const char enumStrBeltStatus_1[] = "Warm Up";
 const char enumStrBeltStatus_2[] = "Stopped";
 const char* const enumStrBeltStatus[]  = { enumStrBeltStatus_0, enumStrBeltStatus_1, enumStrBeltStatus_2 };
 const EnumMenuInfo minfoBeltStatus = { "Belt Status", 12, 0xffff, 2, NO_CALLBACK, enumStrBeltStatus };
-EnumMenuItem menuBeltStatus(&minfoBeltStatus, 1, &menuBeltSpeed);
-RENDERING_CALLBACK_NAME_INVOKE(fnSamplesRtCall, backSubItemRenderFn, "Samples", -1, NO_CALLBACK)
+EnumMenuItem menuBeltStatus(&minfoBeltStatus, 1, &menuBeltSpeed, INFO_LOCATION_PGM);
 const SubMenuInfo minfoSamples = { "Samples", 11, 0xffff, 0, NO_CALLBACK };
-BackMenuItem menuBackSamples(fnSamplesRtCall, &menuBeltStatus);
-SubMenuItem menuSamples(&minfoSamples, &menuBackSamples, &menuDialogs);
+BackMenuItem menuBackSamples(&minfoSamples, &menuBeltStatus, INFO_LOCATION_PGM);
+SubMenuItem menuSamples(&minfoSamples, &menuBackSamples, &menuDialogs, INFO_LOCATION_PGM);
 const BooleanMenuInfo minfoConnectivityEnableUSB = { "Enable USB", 10, 8, 1, NO_CALLBACK, NAMING_TRUE_FALSE };
-BooleanMenuItem menuConnectivityEnableUSB(&minfoConnectivityEnableUSB, false, NULL);
-RENDERING_CALLBACK_NAME_INVOKE(fnConnectivityRtCall, backSubItemRenderFn, "Connectivity", -1, NO_CALLBACK)
+BooleanMenuItem menuConnectivityEnableUSB(&minfoConnectivityEnableUSB, false, NULL, INFO_LOCATION_PGM);
 const SubMenuInfo minfoConnectivity = { "Connectivity", 9, 0xffff, 0, NO_CALLBACK };
-BackMenuItem menuBackConnectivity(fnConnectivityRtCall, &menuConnectivityEnableUSB);
-SubMenuItem menuConnectivity(&minfoConnectivity, &menuBackConnectivity, &menuSamples);
+BackMenuItem menuBackConnectivity(&minfoConnectivity, &menuConnectivityEnableUSB, INFO_LOCATION_PGM);
+SubMenuItem menuConnectivity(&minfoConnectivity, &menuBackConnectivity, &menuSamples, INFO_LOCATION_PGM);
+const AnyMenuInfo minfoSettingsCalibrateNow = { "Calibrate Now", 24, 0xffff, 0, onCalibrateScreen };
+ActionMenuItem menuSettingsCalibrateNow(&minfoSettingsCalibrateNow, NULL, INFO_LOCATION_PGM);
+const BooleanMenuInfo minfoSettingsTSCalibration = { "TS Calibration", 23, 0xffff, 1, onTouchCalibration, NAMING_CHECKBOX };
+BooleanMenuItem menuSettingsTSCalibration(&minfoSettingsTSCalibration, false, &menuSettingsCalibrateNow, INFO_LOCATION_PGM);
 RENDERING_CALLBACK_NAME_INVOKE(fnSettingsRunDurationRtCall, timeItemRenderFn, "Run duration", 4, NO_CALLBACK)
-TimeFormattedMenuItem menuSettingsRunDuration(fnSettingsRunDurationRtCall, TimeStorage(0, 0, 0, 0), 8, (MultiEditWireType)6, NULL);
+TimeFormattedMenuItem menuSettingsRunDuration(fnSettingsRunDurationRtCall, TimeStorage(0, 0, 0, 0), 8, (MultiEditWireType)6, &menuSettingsTSCalibration);
 const AnalogMenuInfo minfoSettingsTargetSpeed = { "Target speed", 7, 2, 200, onTargetChanged, 0, 100, "mS" };
-AnalogMenuItem menuSettingsTargetSpeed(&minfoSettingsTargetSpeed, 0, &menuSettingsRunDuration);
-RENDERING_CALLBACK_NAME_INVOKE(fnSettingsRtCall, backSubItemRenderFn, "Settings", -1, NO_CALLBACK)
+AnalogMenuItem menuSettingsTargetSpeed(&minfoSettingsTargetSpeed, 0, &menuSettingsRunDuration, INFO_LOCATION_PGM);
 const SubMenuInfo minfoSettings = { "Settings", 5, 0xffff, 0, NO_CALLBACK };
-BackMenuItem menuBackSettings(fnSettingsRtCall, &menuSettingsTargetSpeed);
-SubMenuItem menuSettings(&minfoSettings, &menuBackSettings, &menuConnectivity);
+BackMenuItem menuBackSettings(&minfoSettings, &menuSettingsTargetSpeed, INFO_LOCATION_PGM);
+SubMenuItem menuSettings(&minfoSettings, &menuBackSettings, &menuConnectivity, INFO_LOCATION_PGM);
 const AnalogMenuInfo minfoConsumption = { "Consumption", 4, 0xffff, 4000, NO_CALLBACK, 0, 1, "W" };
-AnalogMenuItem menuConsumption(&minfoConsumption, 200, &menuSettings);
+AnalogMenuItem menuConsumption(&minfoConsumption, 200, &menuSettings, INFO_LOCATION_PGM);
 const AnalogMenuInfo minfoACLine = { "AC Line", 3, 0xffff, 2600, NO_CALLBACK, 0, 10, "V" };
-AnalogMenuItem menuACLine(&minfoACLine, 2450, &menuConsumption);
+AnalogMenuItem menuACLine(&minfoACLine, 2450, &menuConsumption, INFO_LOCATION_PGM);
 const BooleanMenuInfo minfoPower = { "Power", 6, 0xffff, 1, NO_CALLBACK, NAMING_ON_OFF };
-BooleanMenuItem menuPower(&minfoPower, true, &menuACLine);
+BooleanMenuItem menuPower(&minfoPower, true, &menuACLine, INFO_LOCATION_PGM);
 
 void setupMenu() {
     // First we set up eeprom and authentication (if needed).
+    setSizeBasedEEPROMStorageEnabled(false);
     glBspRom.initialise(0);
     menuMgr.setEepromRef(&glBspRom);
     // Now add any readonly, non-remote and visible flags.
-    menuBeltSpeed.setReadOnly(true);
     menuBeltStatus.setReadOnly(true);
+    menuBeltSpeed.setReadOnly(true);
 
     // Code generated by plugins.
     renderer.setUpdatesPerSecond(10);
@@ -93,6 +98,6 @@ void setupMenu() {
     renderer.setTitleMode(BaseGraphicalRenderer::TITLE_FIRST_ROW);
     renderer.setUseSliderForAnalog(true);
     renderer.enableTcUnicode();
-    installCoolBlueModernTheme(renderer, MenuFontDef(OpenSansCyrillicLatin18, 0), MenuFontDef(&RobotoMedium24, 1), false);
+    installCoolBlueModernTheme(renderer, MenuFontDef(&OpenSansCyrillicLatin18, 0), MenuFontDef(&RobotoMedium24, 1), false);
 }
 

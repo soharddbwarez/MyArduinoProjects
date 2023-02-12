@@ -14,7 +14,7 @@ If you like **Blynk** - give it a star, or fork it and contribute!
 [![GitHub forks](https://img.shields.io/github/forks/blynkkk/blynk-library.svg?style=social&label=Fork)](https://github.com/blynkkk/blynk-library/network)
 __________
 
-### Blynk is **the most popular Internet of Things platform** for connecting any hardware to the cloud, designing apps to control them, and managing your deployed products at scale. 
+### Blynk is a unique IoT platform for connecting any hardware to the cloud, designing apps to control them, and managing your deployed products at scale.
 
 - With Blynk Library you can connect **over 400 hardware models** (including ESP8266, ESP32, NodeMCU, all Arduinos, Raspberry Pi, Particle, Texas Instruments, etc.)to the Blynk Cloud.
 Full list of supported hardware can be found [here](https://github.com/blynkkk/blynkkk.github.io/blob/master/SupportedHardware.md).
@@ -23,7 +23,7 @@ Full list of supported hardware can be found [here](https://github.com/blynkkk/b
 
 - Hardware can connect to Blynk Cloud (open-source server) over the Internet using hardware connectivity available on your board (like ESP32), or with the use of various shields (Ethernet, WiFi, GSM, LTE, etc). Blynk Cloud is available for every user of Blynk **for free**. Direct connection over Bluetooth is also possible. 
 
-![Blynk Banner](https://github.com/blynkkk/blynkkk.github.io/blob/master/images/GithubBanner.jpg)
+![Blynk Banner](https://github.com/blynkkk/blynkkk.github.io/raw/master/images/GithubBanner.jpg)
 
 ## Downloads
 
@@ -51,7 +51,7 @@ Check out our Examples Browser: http://examples.blynk.cc
 
 ## Documentation and other helpful links
 
-[Full Blynk Documentation](http://docs.blynk.cc/#blynk-firmware) - a complete guide on Blynk features  
+[Full Blynk Documentation](https://docs.blynk.io) - a complete guide on Blynk features  
 [Community (Forum)](http://community.blynk.cc) - join a 500,000 Blynk community to ask questions and share ideas  
 [Help Center](http://help.blynk.cc) - helpful articles on various Blynk aspects  
 [Code Examples Browser](http://examples.blynk.cc) - browse examples to explore Blynk possibilities  
@@ -69,15 +69,12 @@ Check out our Examples Browser: http://examples.blynk.cc
 * [Python, MicroPython](https://github.com/blynkkk/lib-python)
 
 ## Libraries by community
-* [Node.js, Espruino, Browsers](https://github.com/vshymanskyy/blynk-library-js)
 * [Python, MicroPython](https://github.com/vshymanskyy/blynk-library-python)
-* [Particle](https://github.com/vshymanskyy/blynk-library-spark)
+* [Particle](https://github.com/vshymanskyy/blynk-library-particle)
 * [Lua, OpenWrt, NodeMCU](https://github.com/vshymanskyy/blynk-library-lua)
 * [OpenWrt packages](https://github.com/vshymanskyy/blynk-library-openwrt)
 * [MBED](https://developer.mbed.org/users/vshymanskyy/code/Blynk/)
 * [Node-RED for Blynk IoT](https://flows.nodered.org/node/node-red-contrib-blynk-iot) and [for old Blynk](https://www.npmjs.com/package/node-red-contrib-blynk-ws)
-* [LabVIEW](https://github.com/juncaofish/NI-LabVIEWInterfaceforBlynk)
-* [C#](https://github.com/sverrefroy/BlynkLibrary)
 
 ## Contributing
 We accept contributions from our community: stability bugfixes, new hardware support, or any other improvements.  

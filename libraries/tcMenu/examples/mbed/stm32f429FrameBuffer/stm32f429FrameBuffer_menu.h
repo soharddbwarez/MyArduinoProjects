@@ -18,10 +18,12 @@
 #include "BspUserSettings.h"
 #include "tcMenuStChromaArt.h"
 #include <graphics/MenuTouchScreenEncoder.h>
+#include <extras/DrawableTouchCalibrator.h>
 #include <RuntimeMenuItem.h>
 #include <EditableLargeNumberMenuItem.h>
 #include <ScrollChoiceMenuItem.h>
 #include <IoAbstraction.h>
+#include <EepromItemStorage.h>
 #include <mbed/HalStm32EepromAbstraction.h>
 
 // variables we declare that you may need to access
@@ -30,6 +32,7 @@ extern StChromaArtDrawable Drawable;
 extern GraphicsDeviceRenderer renderer;
 extern StBspTouchInterrogator touchInterrogator;
 extern MenuTouchScreenManager touchScreen;
+extern tcextras::IoaTouchScreenCalibrator touchCalibrator;
 extern const UnicodeFont OpenSansCyrillicLatin18[];
 extern const GFXfont RobotoMedium24;
 
@@ -42,6 +45,7 @@ extern EnumMenuItem menuUnicodeChoice;
 extern BackMenuItem menuBackUnicode;
 extern SubMenuItem menuUnicode;
 extern ActionMenuItem menuDialogs;
+extern BooleanMenuItem menuSamplesBoolCheck;
 extern EditableLargeNumberMenuItem menuSamplesLgePos;
 extern Rgb32MenuItem menuSamplesRGB;
 extern TimeFormattedMenuItem menuSamplesTime;
@@ -53,6 +57,8 @@ extern SubMenuItem menuSamples;
 extern BooleanMenuItem menuConnectivityEnableUSB;
 extern BackMenuItem menuBackConnectivity;
 extern SubMenuItem menuConnectivity;
+extern ActionMenuItem menuSettingsCalibrateNow;
+extern BooleanMenuItem menuSettingsTSCalibration;
 extern TimeFormattedMenuItem menuSettingsRunDuration;
 extern AnalogMenuItem menuSettingsTargetSpeed;
 extern BackMenuItem menuBackSettings;
@@ -68,7 +74,9 @@ void setupMenu();
 // Callback functions must always include CALLBACK_FUNCTION after the return type
 #define CALLBACK_FUNCTION
 
+void CALLBACK_FUNCTION onCalibrateScreen(int id);
 void CALLBACK_FUNCTION onPresentDialog(int id);
 void CALLBACK_FUNCTION onTargetChanged(int id);
+void CALLBACK_FUNCTION onTouchCalibration(int id);
 
 #endif // MENU_GENERATED_CODE_H

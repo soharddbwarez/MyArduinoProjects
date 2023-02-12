@@ -20,6 +20,7 @@
 #include <RuntimeMenuItem.h>
 #include <ScrollChoiceMenuItem.h>
 #include <IoAbstraction.h>
+#include <EepromItemStorage.h>
 #include <ArduinoEEPROMAbstraction.h>
 #include <RemoteAuthentication.h>
 
@@ -48,6 +49,7 @@ extern Rgb32MenuItem menuExtrasColor;
 extern TextMenuItem menuExtrasText;
 extern BackMenuItem menuBackExtras;
 extern SubMenuItem menuExtras;
+extern BooleanMenuItem menuSelectMeNewBoolItem;
 extern ActionMenuItem menuSelectMePressMe;
 extern FloatMenuItem menuSelectMeFloat2;
 extern FloatMenuItem menuSelectMeFloat1;

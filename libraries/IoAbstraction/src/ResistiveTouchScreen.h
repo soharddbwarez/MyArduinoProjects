@@ -15,13 +15,52 @@
 #define TOUCH_THRESHOLD 0.05F
 #endif
 
+#define TOUCH_ORIENTATION_BIT_SWAP  0
+#define TOUCH_ORIENTATION_BIT_INV_X 1
+#define TOUCH_ORIENTATION_BIT_INV_Y 2
+
 namespace iotouch {
+    /**
+     * Touch screens don't really have traditional orientation such as Landscape and Portrait. It's better expressed
+     * as if the XY planes need to be swapped, and if any of the values need to be inverted, because it really often
+     * depends on how the touch screen was applied to the screen, this gives full control over every plane, by allow
+     * each to be independently inverted, and then the result of that swapped.
+     */
+    class TouchOrientationSettings {
+    private:
+        uint16_t flags;
+    public:
+        /**
+         * Construct a touch settings object providing the orientation and invert parameters.
+         * @param swapAxisXY if the XY value should become YX
+         * @param xIsInverted if the X values need to be inverted
+         * @param yIsInverted if the Y values need to be inverted
+         */
+        TouchOrientationSettings(bool swapAxisXY, bool xIsInverted, bool yIsInverted) {
+            flags = 0;
+            bitWrite(flags, TOUCH_ORIENTATION_BIT_SWAP, swapAxisXY);
+            bitWrite(flags, TOUCH_ORIENTATION_BIT_INV_X, xIsInverted);
+            bitWrite(flags, TOUCH_ORIENTATION_BIT_INV_Y, yIsInverted);
+        }
+        TouchOrientationSettings(const TouchOrientationSettings& other) = default;
+        TouchOrientationSettings& operator= (const TouchOrientationSettings& other) = default;
+
+        bool isOrientationSwapped() const { return bitRead(flags, TOUCH_ORIENTATION_BIT_SWAP);}
+        bool isXInverted() const { return bitRead(flags, TOUCH_ORIENTATION_BIT_INV_X);}
+        bool isYInverted() const { return bitRead(flags, TOUCH_ORIENTATION_BIT_INV_Y);}
+    };
+
+    /** internal acceleration modes used by the acceleration handler. */
     enum AccelerationMode: uint8_t {
         WAITING,
         ACCELERATING,
         NEVER_ACCELERATES
     };
 
+    /**
+     * Handles acceleration for touch screens, it can be configured with the number of ticks to wait before starting
+     * and if it should accelerate.
+     */
     class AccelerationHandler {
     private:
         uint8_t minTicks;
@@ -37,21 +76,13 @@ namespace iotouch {
             if(mode == ACCELERATING) mode = WAITING;
         }
 
-        bool tick() {
-            if(mode == WAITING) {
-                mode = ACCELERATING;
-                ticks = 0;
-                accel = 800 / SWITCH_POLL_INTERVAL;
-            }
-            if(ticks++ > accel) {
-                ticks = 0;
-                accel = max(minTicks, uint8_t(accel / 2U));
-                return true;
-            }
-            return false;
-        }
+        bool tick();
     };
 
+    /**
+     * Provides calibration for IoAbstraction based touch facilities, it does so by recording the minimum and maximum
+     * values in the X and Y dimension and then correction values to fall within those ranges
+     */
     class CalibrationHandler {
     private:
         float minX, maxX;
@@ -60,30 +91,26 @@ namespace iotouch {
 
     public:
         CalibrationHandler() = default;
+        CalibrationHandler(const CalibrationHandler& other) = default;
+        CalibrationHandler& operator=(const CalibrationHandler& other) = default;
 
-        void setCalibrationValues(float mnX, float mxX, float mnY, float mxY) {
-            minX = mnX;
-            minY = mnY;
-            maxX = mxX;
-            maxY = mxY;
-            calibrationOn = true;
-        }
+        void setCalibrationValues(float mnX, float mxX, float mnY, float mxY);
 
         void enableCalibration(bool state) {
             calibrationOn = state;
         }
 
-        float calibrateX(float rawValue, bool isInverted) const  {
-            auto x = (calibrationOn) ? ((rawValue - minX) * (1.0F / (maxX - minX))) : rawValue;
-            return isInverted ? 1.0F - x : x;
-        }
+        float calibrateX(float rawValue, bool isInverted) const;
 
-        float calibrateY(float rawValue, bool isInverted) const {
-            auto y = (calibrationOn) ? ((rawValue - minY) * (1.0F / (maxY - minY))) : rawValue;
-            return isInverted ? 1.0F - y : y;
-        }
+        float calibrateY(float rawValue, bool isInverted) const;
+
+        float getMinX() const { return minX;}
+        float getMinY() const { return minY;}
+        float getMaxX() const { return maxX;}
+        float getMaxY() const { return maxY;}
     };
 
+    /** records the current state of the touch panel, IE not touched, touched, held or debouncing. */
     enum TouchState : uint8_t {
         /** no touch has been detected */
         NOT_TOUCHED,
@@ -97,17 +124,22 @@ namespace iotouch {
 
 #define portableFloatAbs(x) ((x)<0.0F?-(x):(x))
 
+    /**
+     * A touch integrator is a class that is capable of receiving touch events from a touch panel and reporting those
+     * said events to the touch screen manager. It is a pull API in that `internalProcessTouch` will be called to pull
+     * the value from this class as needed.
+     */
     class TouchInterrogator {
     public:
-        enum TouchRotation : uint8_t {
-            PORTRAIT,
-            PORTRAIT_INVERTED,
-            LANDSCAPE,
-            LANDSCAPE_INVERTED,
-            RAW
-        };
-
-        virtual TouchState internalProcessTouch(float* ptrX, float* ptrY, TouchRotation rotation, const CalibrationHandler& calib)=0;
+        /**
+         * called by the touch screen manager to get the latest touch information.
+         * @param ptrX a pointer to be populated with the X position between 0 and 1
+         * @param ptrY a pointer to be popualted with the Y position between 0 and 1
+         * @param rotation  the rotation of the display, one of the above.
+         * @param calib the calibration handler that can be used to adjust the values before returning from this method
+         * @return the touch state after this call
+         */
+        virtual TouchState internalProcessTouch(float* ptrX, float* ptrY, const TouchOrientationSettings& settings, const CalibrationHandler& calib)=0;
     };
 
     class TouchInterrogator;
@@ -119,12 +151,12 @@ namespace iotouch {
         CalibrationHandler calibrator;
         TouchInterrogator* touchInterrogator;
         TouchState touchMode;
+        TouchOrientationSettings orientation;
         bool usedForScrolling = false;
-        TouchInterrogator::TouchRotation rotation;
     public:
-        explicit TouchScreenManager(TouchInterrogator* interrogator, TouchInterrogator::TouchRotation rot) :
+        explicit TouchScreenManager(TouchInterrogator* interrogator, const TouchOrientationSettings& orientationSettings) :
                 accelerationHandler(10, true), calibrator(),
-                touchInterrogator(interrogator), touchMode(NOT_TOUCHED), rotation(rot) {}
+                touchInterrogator(interrogator), touchMode(NOT_TOUCHED), orientation(orientationSettings) {}
 
         void start() {
             touchMode = NOT_TOUCHED;
@@ -139,55 +171,17 @@ namespace iotouch {
             calibrator.setCalibrationValues(xmin, xmax, ymin, ymax);
         }
 
+        void setCalibration(const CalibrationHandler& other) { calibrator = other; }
+
         void enableCalibration(bool ena) {
             calibrator.enableCalibration(ena);
         }
 
-        void exec() override {
-            float x;
-            float y;
-            auto touch = touchInterrogator->internalProcessTouch(&x, &y, rotation, calibrator);
-            if(x < 0.0F) x = 0.0F;
-            if(y < 0.0F) y = 0.0F;
-            // now determine what state we are in, touched, not touched or held.
-            auto oldTouchMode = touchMode;
-            switch(touch) {
-                case NOT_TOUCHED:
-                    touchMode = NOT_TOUCHED;
-                    break;
-                case TOUCHED:
-                case HELD:
-                    touchMode = (oldTouchMode == TOUCHED || oldTouchMode == HELD) ? HELD : TOUCHED;
-                    break;
-                case TOUCH_DEBOUNCE:
-                    taskManager.scheduleOnce(5, this, TIME_MILLIS);
-                    return;
-            }
+        TouchOrientationSettings changeOrientation(const TouchOrientationSettings& newOrientation);
 
-            // we are in a repeated not touch situation, we can slow down the polling slightly now. No update needed
-            // even at 1/10th of a second, we'll still wake up pretty quick when they select something.
-            if (oldTouchMode == NOT_TOUCHED && touchMode == NOT_TOUCHED) {
-                taskManager.scheduleOnce(100, this, TIME_MILLIS);
-                accelerationHandler.reset();
-                return;
-            }
+        TouchOrientationSettings getOrientation() { return orientation; }
 
-            // only the held state state is subject to acceleration control
-            if(touchMode != HELD || usedForScrolling || accelerationHandler.tick()) {
-                if (rotation == TouchInterrogator::LANDSCAPE || rotation == TouchInterrogator::LANDSCAPE_INVERTED) {
-                    sendEvent(y, x, touch, touchMode);
-                } else {
-                    sendEvent(x, y, touch, touchMode);
-                }
-            }
-            taskManager.scheduleOnce(20, this, TIME_MILLIS);
-        }
-
-        TouchInterrogator::TouchRotation changeRotation(TouchInterrogator::TouchRotation newRotation) {
-            auto oldRotation = rotation;
-            rotation = newRotation;
-            return oldRotation;
-        }
+        void exec() override;
 
         /**
          * You must create a subclass extends from this and takes the three values converting into an
@@ -220,60 +214,7 @@ namespace iotouch {
         ResistiveTouchInterrogator(pinid_t xpPin, pinid_t xnPin, pinid_t ypPin, pinid_t ynPin)
                 : xpPin(xpPin), xnPinAdc(xnPin), ypPinAdc(ypPin), ynPin(ynPin) {}
 
-        TouchState internalProcessTouch(float* ptrX, float* ptrY, TouchRotation rotation, const CalibrationHandler& calibrator) override {
-            auto* analogDevice = internalAnalogIo();
-            auto* device = internalDigitalIo();
-            // first we calculate everything in the X dimension.
-            analogDevice->initPin(ypPinAdc, DIR_IN);
-            device->pinMode(xnPinAdc, OUTPUT);
-            device->pinMode(ynPin, INPUT);
-            device->pinMode(xpPin, OUTPUT);
-            device->digitalWrite(xpPin, HIGH);
-            device->digitalWriteS(xnPinAdc, LOW);
-
-            taskManager.yieldForMicros(20);
-            float firstSample = analogDevice->getCurrentFloat(ypPinAdc);
-            float secondSample = analogDevice->getCurrentFloat(ypPinAdc);
-
-            if (portableFloatAbs(firstSample - secondSample) > 0.007) {
-                return TOUCH_DEBOUNCE;
-            }
-            float x = calibrator.calibrateX((firstSample + secondSample) / 2.0F, (rotation == LANDSCAPE_INVERTED || rotation == PORTRAIT));
-
-            // now we calculate everything in the Y dimension.
-            analogDevice->initPin(xnPinAdc, DIR_IN);
-            device->pinMode(xpPin, INPUT);
-            device->pinMode(ypPinAdc, OUTPUT);
-            device->pinMode(ynPin, OUTPUT);
-            device->digitalWrite(ypPinAdc, HIGH);
-            device->digitalWriteS(ynPin, LOW);
-
-            taskManager.yieldForMicros(20);
-            firstSample = analogDevice->getCurrentFloat(xnPinAdc);
-            secondSample = analogDevice->getCurrentFloat(xnPinAdc);
-
-            if (portableFloatAbs(firstSample - secondSample) > 0.007) {
-                return TOUCH_DEBOUNCE;
-            }
-            float y = calibrator.calibrateY((firstSample + secondSample) / 2.0F, (rotation == LANDSCAPE || rotation == PORTRAIT));
-
-            // and finally the Z dimension
-            device->pinMode(xpPin, OUTPUT);
-            analogDevice->initPin(ypPinAdc, DIR_IN);
-            device->digitalWrite(xpPin, LOW);
-            device->digitalWriteS(ynPin, HIGH);
-
-            taskManager.yieldForMicros(20);
-
-            firstSample = analogDevice->getCurrentFloat(xnPinAdc);
-            secondSample = analogDevice->getCurrentFloat(ypPinAdc);
-
-            //float touch = ((z2 / z1) * -1.0) * x * resistanceX;
-            float touch = 1.0F - (secondSample - firstSample);
-            *ptrX = x;
-            *ptrY = y;
-            return (touch > TOUCH_THRESHOLD) ? TOUCHED : NOT_TOUCHED;
-        }
+        TouchState internalProcessTouch(float* ptrX, float* ptrY, const TouchOrientationSettings& rotation, const CalibrationHandler& calibrator) override;
 
     };
 
@@ -284,38 +225,19 @@ namespace iotouch {
     class ValueStoringResistiveTouchScreen : public TouchScreenManager {
     private:
         float lastX, lastY, touchPressure;
-        TouchInterrogator& interrogator;
         TouchState touchState;
     public:
-        ValueStoringResistiveTouchScreen(TouchInterrogator& interrogator, TouchInterrogator::TouchRotation rotation)
-            : TouchScreenManager(&interrogator, rotation), interrogator(interrogator) {}
-
-        void sendEvent(float locationX, float locationY, float pressure, TouchState touched) override {
-            lastX = locationX;
-            lastY = locationY;
-            touchState = touched;
-            touchPressure = pressure;
+        ValueStoringResistiveTouchScreen(TouchInterrogator& interrogator, const TouchOrientationSettings& rotation)
+            : TouchScreenManager(&interrogator, rotation), lastX(0.0F), lastY(0.0F), touchState(NOT_TOUCHED) {
         }
 
-        float getTouchPressure() const {
-            return touchPressure;
-        }
+        void sendEvent(float locationX, float locationY, float pressure, TouchState touched) override;
 
-        float getLastX() const {
-            return lastX;
-        }
-
-        float getLastY() const {
-            return lastY;
-        }
-
-        bool isPressed() const {
-            return touchState == TOUCHED;
-        }
-
-        TouchState getTouchState() const {
-            return touchState;
-        }
+        float getTouchPressure() const { return touchPressure; }
+        float getLastX() const { return lastX; }
+        float getLastY() const { return lastY; }
+        bool isPressed() const { return touchState == TOUCHED; }
+        TouchState getTouchState() const { return touchState; }
     };
 }
 

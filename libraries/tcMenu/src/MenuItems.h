@@ -136,7 +136,9 @@ enum BooleanNaming : uint8_t {
 	/** prefer the use of On / Off */
 	NAMING_ON_OFF,
 	/** prefer the user of Yes and No */
-	NAMING_YES_NO
+	NAMING_YES_NO,
+    /** prefer that the user see a checkbox */
+    NAMING_CHECKBOX
 };
 
 /**
@@ -297,12 +299,16 @@ enum RenderFnMode : uint8_t {
 	RENDERFN_EEPROM_POS,
 	/** the callback has been triggered, buffer not needed */
 	RENDERFN_INVOKE,
+    /** list only - an item in a list has been activated, IE the index has changed) */
+	RENDERFN_ACTIVATE,
 	/** A new value for a position in the list, provided in buffer, it's length is in size. - used only in editable mode */
 	RENDERFN_SET_VALUE,
 	/** Gets the range zero based, for this part - used only in editable mode, buffer not needed */
 	RENDERFN_GETRANGE,
 	/** Gets the integer value of the current part that is being edited, buffer not needed */
-	RENDERFN_GETPART
+	RENDERFN_GETPART,
+    /** Sets the value at a given position based on a keyboard press, only currently used by text controls */
+    RENDERFN_SET_TEXT_VALUE
 };
 
 // forward reference

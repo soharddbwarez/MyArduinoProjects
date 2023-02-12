@@ -17,6 +17,20 @@ void setup() {
 
     setupMenu();
 
+    /**
+     * The function you provide is called when the touch calibration starts and ends. The parameter is false at start
+     * and true at the end. At the start you should remove any rotations so that the screen and touch are in alignment
+     * at their defaults. The UI will then present in the native format, and record the ranges, then once dismissed the
+     * function is called again, here you should reapply any required settings and if need be to a commit on the EEPROM.
+     */
+    touchCalibrator.initCalibration([](bool starting) {
+        serlogF2(SER_DEBUG, "Calibration FN done=", starting);
+        if(!starting) {
+            reinterpret_cast<HalStm32EepromAbstraction*>(menuMgr.getEepromAbstraction())->commit();
+            menuSettingsTSCalibration.setBoolean(true);
+        }
+    }, true);
+
     taskManager.scheduleFixedRate(100, [] {
         menuACLine.setCurrentValue(2350 + (rand() % 100));
         menuConsumption.setCurrentValue(1900 + (rand() % 200));
@@ -53,4 +67,15 @@ void CALLBACK_FUNCTION onPresentDialog(int id) {
         dlg->show("More dialogs?", true, onFirstDialogCompleted);
         dlg->copyIntoBuffer("Accept for more");
     });
+}
+
+
+void CALLBACK_FUNCTION onCalibrateScreen(int id) {
+    touchCalibrator.reCalibrateNow();
+}
+
+
+
+void CALLBACK_FUNCTION onTouchCalibration(int id) {
+    touchScreen.enableCalibration(menuSettingsTSCalibration.getBoolean());
 }

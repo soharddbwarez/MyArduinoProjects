@@ -83,6 +83,9 @@ void StChromaArtDrawable::drawBox(const Coord &where, const Coord &size, bool fi
 }
 
 void StChromaArtDrawable::drawCircle(const Coord &where, int radius, bool filled) {
+    // make sure the circle is within bounds, otherwise it crashes BSP.
+    if(where.x < radius || where.y < radius || where.x + radius > BSP_LCD_GetXSize() || where.y + radius > BSP_LCD_GetYSize()) return;
+
     BSP_LCD_SetTextColor(drawColor);
     if(filled) {
         BSP_LCD_FillCircle(where.x, where.y, radius);
@@ -105,45 +108,16 @@ void StChromaArtDrawable::drawPolygon(const Coord *points, int numPoints, bool f
 void StChromaArtDrawable::transaction(bool isStarting, bool redrawNeeded) {
 }
 
-/**
- * The lightest weight plotter possible for the BSP driver, implements the needed functions direct to BSP calls.
- */
-class BspTextPlotPipeline : public TextPlotPipeline {
-private:
-    Coord cursorPos {};
-public:
-    void drawPixel(uint16_t x, uint16_t y, uint32_t color) override {
-        BSP_LCD_DrawPixel(x, y, color);
-    }
-
-    void setCursor(const Coord &where) override {
-        cursorPos = where;
-    }
-
-    Coord getCursor() override {
-        return cursorPos;
-    }
-
-    Coord getDimensions() override {
-        return Coord(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
-    }
-};
-
-UnicodeFontHandler *StChromaArtDrawable::createFontHandler() {
-    auto fontPlotter = new BspTextPlotPipeline();
-    return new UnicodeFontHandler(fontPlotter, ENCMODE_UTF8);
-}
-
 #if TC_BSP_TOUCH_DEVICE_PRESENT == true
 
-iotouch::TouchState StBspTouchInterrogator::internalProcessTouch(float *ptrX, float *ptrY, iotouch::TouchInterrogator::TouchRotation rotation,
+iotouch::TouchState StBspTouchInterrogator::internalProcessTouch(float *ptrX, float *ptrY, const iotouch::TouchOrientationSettings& rotation,
                                                                  const iotouch::CalibrationHandler& calibrationHandler) {
     TS_StateTypeDef tsState;
     BSP_TS_GetState(&tsState);
     if(!tsState.TouchDetected) return iotouch::NOT_TOUCHED;
 
-    *ptrX = calibrationHandler.calibrateX((float)tsState.X / float(width), false);
-    *ptrY = calibrationHandler.calibrateY(float(height - tsState.Y) / float(height), false);
+    *ptrX = calibrationHandler.calibrateX((float)tsState.X / float(width), rotation.isXInverted());
+    *ptrY = calibrationHandler.calibrateY(float(height - tsState.Y) / float(height), rotation.isYInverted());
     return iotouch::TOUCHED;
 }
 

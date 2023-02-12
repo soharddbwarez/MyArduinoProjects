@@ -6,6 +6,7 @@
 #include "tcMenu.h"
 #include "MenuItems.h"
 #include "RuntimeMenuItem.h"
+#include "lang/language_select.h"
 #include "graphics/RuntimeTitleMenuItem.h"
 
 MenuItem::MenuItem(MenuType menuType, const AnyMenuInfo* menuInfo, MenuItem* next, bool infoProgmem) {
@@ -297,12 +298,12 @@ void ValueMenuItem::setCurrentValue(uint16_t val, bool silent) {
 	changeOccurred(silent);
 }
 
-const char ON_STR[] PGM_TCM   = "ON";
-const char OFF_STR[] PGM_TCM  = "OFF";
-const char YES_STR[] PGM_TCM  = "YES";
-const char NO_STR[] PGM_TCM   = "NO";
-const char TRUE_STR[] PGM_TCM = "TRUE";
-const char FALSE_STR[] PGM_TCM= "FALSE";
+const char ON_STR[] PGM_TCM   = TXT_BOOL_ON_TEXT;
+const char OFF_STR[] PGM_TCM  = TXT_BOOL_OFF_TEXT;
+const char YES_STR[] PGM_TCM  = TXT_BOOL_YES_TEXT;
+const char NO_STR[] PGM_TCM   = TXT_BOOL_NO_TEXT;
+const char TRUE_STR[] PGM_TCM = TXT_BOOL_TRUE_TEXT;
+const char FALSE_STR[] PGM_TCM= TXT_BOOL_FALSE_TEXT;
 
 void copyMenuItemNameAndValue(const MenuItem* item, char* buffer, size_t bufferSize, char additionalSep) {
     item->copyNameToBuffer(buffer, bufferSize);
@@ -312,6 +313,9 @@ void copyMenuItemNameAndValue(const MenuItem* item, char* buffer, size_t bufferS
     int pos = strlen(buffer);
     copyMenuItemValue(item, buffer + pos, bufferSize - pos);
 }
+
+const char CHECKED_STR[] PROGMEM = "[X]";
+const char UNCHECKED_STR[] PROGMEM = "[ ]";
 
 void copyMenuItemValue(const MenuItem* item, char* buffer, size_t bufferSize) {
     buffer[0] = 0;
@@ -329,6 +333,9 @@ void copyMenuItemValue(const MenuItem* item, char* buffer, size_t bufferSize) {
                 break;
             case NAMING_YES_NO:
                 val = boolItem->getBoolean() ? YES_STR : NO_STR;
+                break;
+            case NAMING_CHECKBOX:
+                val = boolItem->getBoolean() ? CHECKED_STR : UNCHECKED_STR;
                 break;
             default:
                 val = boolItem->getBoolean() ? TRUE_STR : FALSE_STR;

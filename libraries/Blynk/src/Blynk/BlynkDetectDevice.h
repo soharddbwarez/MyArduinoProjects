@@ -144,6 +144,16 @@
         #define BLYNK_INFO_DEVICE  "Particle Ethernet"
         #elif PLATFORM_ID==10
         #define BLYNK_INFO_DEVICE  "Particle Electron"
+
+        #elif PLATFORM_ID==12
+        #define BLYNK_INFO_DEVICE  "Particle Argon"
+        #elif PLATFORM_ID==13
+        #define BLYNK_INFO_DEVICE  "Particle Boron"
+        #elif PLATFORM_ID==14
+        #define BLYNK_INFO_DEVICE  "Particle Xenon"
+        #elif PLATFORM_ID==26
+        #define BLYNK_INFO_DEVICE  "Particle Tracker"
+
         #elif PLATFORM_ID==31
         #define BLYNK_INFO_DEVICE  "Particle RPi"
         #elif PLATFORM_ID==82
@@ -227,8 +237,13 @@
             #define BLYNK_BUFFERS_SIZE 1024
         #endif
 
+        #if defined(ESP32)
+            #define BLYNK_NO_ANALOG_PINS
+        #endif
+
         #if defined(ARDUINO_ARCH_AVR)
             #define BLYNK_USE_INTERNAL_ATOLL
+            #define BLYNK_MAX_TIMERS 8
         #endif
 
         #if defined(ARDUINO_ARCH_SAMD)
@@ -354,7 +369,10 @@
         /* ESP32 */
         #elif defined(ARDUINO_ESP32C3_DEV)
         #define BLYNK_INFO_DEVICE  "ESP32C3"
-        #define BLYNK_NO_ANALOG_PINS
+        #elif defined(ARDUINO_ESP32C6_DEV)
+        #define BLYNK_INFO_DEVICE  "ESP32C6"
+        #elif defined(ARDUINO_ESP32S3_DEV)
+        #define BLYNK_INFO_DEVICE  "ESP32S3"
         #elif defined(ARDUINO_ESP32S2_DEV)
         #define BLYNK_INFO_DEVICE  "ESP32S2"
         #elif defined(ARDUINO_ARCH_ESP32)
@@ -424,9 +442,15 @@
         #define BLYNK_USE_128_VPINS
         #define BLYNK_BUFFERS_SIZE 512
 
-        /* Nordic NRF5x */
+        /* Nordic nRF52 */
+        #elif defined(ARDUINO_ARCH_NRF5) && defined(NRF52_SERIES)
+        #define BLYNK_INFO_DEVICE  "nRF52"
+        #define BLYNK_USE_128_VPINS
+        #define BLYNK_BUFFERS_SIZE 1024
+
+        /* Nordic nRF51 */
         #elif defined(ARDUINO_ARCH_NRF5)
-        #define BLYNK_INFO_DEVICE  "nRF5"
+        #define BLYNK_INFO_DEVICE  "nRF51"
         #define BLYNK_USE_128_VPINS
         #define BLYNK_BUFFERS_SIZE 512
 

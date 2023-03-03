@@ -129,6 +129,12 @@ Comments to pin sharing:
 * supports up to four stepper motors using Step/Direction/Enable Control (Direction and Enable is optional)
 * Steppers' command queue depth: 32
 
+### ESP32S3
+
+* allows up to 200000 generated steps per second ?
+* supports up to four stepper motors using Step/Direction/Enable Control (Direction and Enable is optional)
+* Steppers' command queue depth: 32
+
 ### Atmel SAM Due
 
 * allows up to 50000 generated steps per second
@@ -267,6 +273,10 @@ As of now, allocation of steppers on esp32 are: first all 6 mcpwm/pcnt drivers a
 ### ESP32S2
 
 This stepper driver uses rmt module.
+
+### ESP32S3
+
+This stepper driver uses mcpwm/pcnt modules. Can drive up to 4 motors. Tested with 2 motors.
 
 ### ESP32C3/ESP32-MINI-1
 
@@ -422,4 +432,5 @@ As mentioned by kthod861 in [Issue #110](https://github.com/gin66/FastAccelStepp
 - Thanks ixil for pull request (https://github.com/gin66/FastAccelStepper/pull/19) for ATmega2560
 - Thanks gagank1 for esp-idf integration by adding CMakeLists.txt (https://github.com/gin66/FastAccelStepper/pull/81)
 - Thanks clazarowitz for the amazing atmel sam due port (https://github.com/gin66/FastAccelStepper/pull/82)
+- Thanks HeldeReis for the awesome ESP32-S3 port (https://github.com/gin66/FastAccelStepper/pull/162)
 
